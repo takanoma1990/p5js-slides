@@ -1,0 +1,307 @@
+/* @theme gradient_v2 */
+/* Author: rnd195 https://github.com/rnd195/ */
+/* MIT license https://github.com/rnd195/my-marp-themes/blob/live/licenses/LICENSE */
+
+@import "default";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+:root {
+  font-family: Inter, Helvetica, Arial;
+  --color--text:#333;
+}
+
+section {
+  background-color: #ffffff;
+  background-image: linear-gradient(to top right,
+      #fce1e4 10%,
+      #e1f7d5 45%,
+      #c9f0ff 90%);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #5a3d85;
+}
+
+
+
+code {
+  background-color: #ffffffad;
+}
+
+mark {
+  background-color: #eaa2ee;
+  padding: 0 2px 2px;
+}
+
+pre {
+  background-color: #ffffffad;
+}
+
+/* https://github.com/yhatt/marp/issues/263 */
+section::after {
+  font-size: 0.75em;
+  content: attr(data-marpit-pagination) " / " attr(data-marpit-pagination-total);
+}
+
+/* the "center" keyword centers the image - may break, careful */
+/* https://github.com/marp-team/marpit/issues/141#issuecomment-473204518 */
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+
+/* || SECTION CLASS: blue */
+section.blue {
+  background-color: #ffffff;
+  background-image: linear-gradient(to bottom right, #cadaf7 5%, #87a7e4 95%);
+}
+
+section.blue>h1,
+section.blue>h2,
+section.blue>h3,
+section.blue>h4,
+section.blue>h5,
+section.blue>h6 {
+  color: #214484;
+}
+
+section.blue>a {
+  color: #303ca6;
+}
+
+section.blue::after,
+section.blue>footer,
+section.blue>header {
+  color: #303ca6;
+}
+
+/* || SECTION CLASS: tinytext */
+/* new class that makes p, ul, and blockquote text smaller */
+/* might be useful for the References slide, use <!-- _class: tinytext --> */
+section.tinytext>p,
+section.tinytext>ul,
+section.tinytext>blockquote {
+  font-size: 0.65em;
+}
+
+section.sunset {
+  background: linear-gradient(120deg, #ff7e5f, #feb47b);
+  color: #fff8f0;
+}
+
+section.sunset h1,
+section.sunset h2 {
+  color: #ffffff;
+}
+
+section.cosmic {
+  background: linear-gradient(160deg, #0f2027, #203a43, #2c5364);
+  color: #e0e0e0;
+  line-height: 1.8;
+
+  h1, h2 {
+    color: #76c7c0;
+  }
+
+  footer, header {
+    color: #eee;
+  }
+}
+
+section.cosmic::after {
+  color: white;
+  font-size: 0.75em;
+  content: attr(data-marpit-pagination) " / " attr(data-marpit-pagination-total);
+}
+
+
+section.green {
+  background: linear-gradient(to right, #a8e063, #56ab2f);
+  color: #1c3d1a;
+}
+
+section.green h1,
+section.green h2 {
+  color: #234d20;
+}
+
+/* ネオンカラー */
+section.neon {
+  background: linear-gradient(135deg, #8e2de2, #4a00e0);
+  color: #f5f5f5;
+}
+
+section.neon h1,
+section.neon h2 {
+  color: #ffea00;
+  text-shadow: 0 0 10px #ffea00;
+}
+
+section.neon::after,
+section.neon>footer,
+section.neon>header {
+  color: #ffffff;
+}
+
+/* ピーチ */
+section.peach {
+  background: linear-gradient(135deg, #ffab91, #ff6b6b);
+  color: #fff;
+  /* 背景色とのコントラストを調整 */
+}
+
+section.peach h1,
+section.peach h2 {
+  color: #ffffff;
+  /* 背景色とのコントラストを調整 */
+  text-shadow: 0 0 10px #696966;
+}
+
+
+section.peach::after,
+section.peach>footer,
+section.peach>header {
+  color: #ffffff;
+}
+
+section.rose {
+  background: linear-gradient(135deg, #f2bed2, #e9c46a);
+  color: #333;
+  /* 背景色とのコントラストを調整 */
+}
+
+section.rose h1,
+section.rose h2 {
+  color: #cc0000;
+  /* 背景色とのコントラストを調整 */
+  text-shadow: 0 0 10px #cc0000;
+}
+
+
+section.dustyrose {
+  background: linear-gradient(135deg, #c70039, #a3158d);
+  color: #fff;
+  /* 背景色とのコントラストを調整 */
+}
+
+section.dustyrose h1,
+section.dustyrose h2 {
+  color: #ffe0bd;
+  /* 背景色とのコントラストを調整 */
+  text-shadow: 0 0 10px #ffe0bd;
+}
+
+section.dustyrose::after,
+section.dustyrose>footer,
+section.dustyrose>header {
+  color: #ffffff;
+}
+
+section.pinkgold {
+  background: linear-gradient(135deg, #f5deb3, #e6a182);
+  color: #333;
+  /* 背景色とのコントラストを調整 */
+}
+
+section.pinkgold h1,
+section.pinkgold h2 {
+  color: #cc0000;
+  /* 背景色とのコントラストを調整 */
+  text-shadow: 0 0 10px #cc0000;
+}
+
+section.pinkgold_2 {
+  background: linear-gradient(0deg, #f5deb3, #e6a182, #d9a29b);
+  /* 色数を
+増やして滑らかな変化 */
+  color: #333;
+  /* text-shadow: ... 削除 (背景色とのコントラストが十分であれば不要) */
+}
+
+section.pinkgold_2 h1,
+section.pinkgold h2 {
+  color: #cc0000;
+  text-shadow: 0 0 5px #cc0000;
+  /* テキストシャドウのサイズを小さく */
+}
+
+section.p5 {
+  background-color: #ffffff;
+  background-image: linear-gradient(to bottom right, 
+      #ffffff 0%, 
+      #fdfff7 90%, 
+      #d78c8c 120%
+      );
+}
+
+section.p5_v2 {
+  background-color: #ffffff;
+  background-image: linear-gradient(to bottom right, 
+      #edfbf6 0%, 
+      #ffdff9 90%, 
+      #d78c8c 120%
+      );
+
+      & h1,
+      & h2{
+            color:#80057c;
+      }
+}
+
+
+
+
+
+section.p3 {
+  background-color: #ffffff;
+  background-image: radial-gradient(circle, 
+      #ffffff 0%, 
+      #fbfff0 85%, 
+      #d78c8c 105%
+      );
+}
+
+section.p5_v3 {
+  background-color: #ffffff;
+  background-image: linear-gradient(to bottom right, 
+      #edfbf6 0%, 
+      #ffdff9 90%, 
+      #d78c8c 120%
+      );
+
+      & h1,
+      & h2{
+            color:#80057c;
+      }
+}
+
+/* p5_v2 スライド内のコードブロックだけを調整 */
+section.p5_v3 pre {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #e0d3e6;
+  border-radius: 10px;
+  padding: 1em 1.4em;
+  overflow-x: auto;
+  font-family: "Fira Code", "Courier New", monospace;
+  font-size: 0.9em;
+
+  /* PDFでも文字として扱うためのおまじない */
+  -webkit-print-color-adjust: exact;
+  color-adjust: exact;
+  user-select: text;
+}
+
+section.p5_v3 pre code {
+  color: #222 !important;          /* 文字色をはっきりさせる */
+  text-shadow: none !important;    /* ぼかし系が入っていた場合に消す */
+}
+
+/* もしシンタックスハイライトの span が残っていても色を強制上書き */
+section.p5_v3 pre code span {
+  color: inherit !important;
+}
