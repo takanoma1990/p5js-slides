@@ -1,4 +1,3 @@
 themeSet:
   - ./slides/themes/gradient_v2.css
 allowLocalFiles: true
-output: .
