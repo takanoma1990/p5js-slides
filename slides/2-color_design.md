@@ -318,10 +318,10 @@ function setup() {
 ```javascript
 let palette = ["#FF595E", "#FFCA3A", "#8AC926", "#1982C4", "#6A4C93"];
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(800, 800);
   background("#F9F9F9");
   noStroke();
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 200; i++) {
     fill(random(palette));
     ellipse(random(width), random(height), random(20, 60));
   }
@@ -335,17 +335,15 @@ function setup() {
 
 ## 2色または3色で統一したデザイン
 
-- 
-
 ```javascript
 let colors = ["#2E86AB", "#F6C667", "#E63946"];
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(800, 800);
   noStroke();
   background("#F1FAEE");
-  for (let i = 0; i < 200; i++) {
+  for (let i = 0; i < 400; i++) {
     fill(random(colors));
-    rect(random(width), random(height), random(10, 30));
+    rect(random(width), random(height), random(10, 50));
   }
 }
 ```
