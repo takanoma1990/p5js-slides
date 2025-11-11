@@ -1,6 +1,6 @@
 ---
 marp: true
-theme: ./slides/themes/gradient_v2.css
+theme: gradient_v2
 paginate: true
 class: p5_v2
 header: p5.js 授業 第1回
