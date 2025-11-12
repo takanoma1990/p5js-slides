@@ -355,6 +355,10 @@ function setup() {
 
 ![bg right:41% w:120mm](./img/第二回/色見本大辞典の一部.png)
 
+<div class="footer">
+  <a href="https://www.colordic.org/">参考：<u>https://www.colordic.org/</u></a>
+</div>
+
 ---
 
 ## カラーコードを使う例
