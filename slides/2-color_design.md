@@ -529,18 +529,19 @@ function setup() {
 
 ## lerpColor()で色を補間したグラデーション
 
+- 二色のカラーオブジェクトの値を補完してくれる
 
 ```javascript
 function setup() {
   createCanvas(400, 400);
-  noStroke();
+  strokeWeight(2); //線を1pxだけ太くする
   let c1 = color(255, 100, 100);
   let c2 = color(100, 100, 255);
   for (let i = 0; i < width; i++) {
-    let inter = map(i, 0, width, 0, 1);
-    let c = lerpColor(c1, c2, inter);
+    let amount = i/width;//0~widthの値を0~1
+    let c = lerpColor(c1, c2, amount);
     stroke(c);
-    line(i, 0, i, height);
+    line(i, 0, i, height);//line(始点x，始点y, 終点x,終点y)
   }
 }
 ```
@@ -577,7 +578,7 @@ function mousePressed() {
 ## 目的に合わせたキャンバスサイズの指定
 
 - **出力先に合わせてキャンバスサイズを設定する**  
-  - SNS投稿：`1080×1080`  
+  - SNS投稿：`1080×1080`
   - スマホ壁紙：`1080×1920`  
   - ポスターA4(300dpi)：`2480×3508`
   - ポスターA4(150dpi)：`1240×1754`
@@ -649,7 +650,7 @@ function setup() {
   createCanvas(1240, 1754);//A4(150dpi)
   let c1 = color("#FF9A8B"); let c2 = color("#8AC6FF");
   for (let y = 0; y < height; y++) {
-    let inter = map(y, 0, height, 0, 1);
+    let inter = y/height; // 
     stroke(lerpColor(c1, c2, inter));
     line(0, y, width, y);
   }
@@ -672,9 +673,9 @@ function mousePressed(){
 function setup() {
   createCanvas(1240, 1754); background(255);
   c1 = color("#FF9A8B"); c2 = color("#FF9A8B"); c2.setAlpha(0); //透明度0の同色
-  const headerH = height * 0.4; // 上から40%をグラデーションに
+  let headerH = height * 0.4; // 上から40%をグラデーションに
   for (let y = 0; y < headerH; y++) {
-    let inter = map(y, 0, headerH, 0, 1);
+    let inter = y/headerH;
     stroke(lerpColor(c1, c2, inter));
     line(0, y, width, y);
   }
@@ -687,7 +688,7 @@ function mousePressed(){
   saveCanvas("Gradiation_Poster","png");
 }
 ```
-
+<!-- 
 ---
 
 ## 例：図形の描画位置によって透明度を変える
@@ -697,10 +698,11 @@ function setup() {
   background("#f8edea"); noStroke();
   rectMode(CENTER);
   colors = ["#bcd4e2","#518bb3","#053351"]; // 青ベースの配色
+  let headerH = height * 0.4;
   for (let i = 0; i < 300; i++) {
     col = color(random(colors));
     let x = random(width); let y = random(height);
-    Alpha = map(y, 0, height, 200, -50);// 下の位置での描画になるほど透明に
+    Alpha = (y/headerH)*255;// 下の位置での描画になるほど透明に
     col.setAlpha(Alpha);
     fill(col);
     ellipse(x, y, random(5, 100));
@@ -709,7 +711,7 @@ function setup() {
 function mousePressed(){
   saveCanvas("Gradiation_Object","png");
 }
-```
+``` -->
 
 ---
 
