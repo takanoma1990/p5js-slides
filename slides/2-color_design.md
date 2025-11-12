@@ -60,6 +60,7 @@ footer: 色のデザイン
    - Webカラー / 配色のコツ / 統一デザイン  
 - グラデーション表現
    - `lerpColor()` / HSBによる滑らかな色変化  
+- 演習：グラフィックを画像を書き出す
 
 ---
 
@@ -207,6 +208,25 @@ function setup() {
 ```
 
 ![bg right:43% w:100mm](./img/第二回/hsb_rect_alpha.png)
+
+---
+
+## HSBで滑らかな色の変化を作る
+
+```javascript
+function setup() {
+  createCanvas(400, 400);
+  colorMode(HSB, 360, 100, 100);
+  noStroke();
+  for (let x = 0; x < width; x++) {
+    let h = map(x, 0, width, 0, 360);
+    stroke(h, 80, 100);
+    line(x, 0, x, height);
+  }
+}
+```
+
+![bg right:43% w:100mm](./img/第二回/hsb_gradient.png)
 
 ---
 
@@ -389,7 +409,32 @@ function setup() {
 
 ---
 
-## 2色または3色で統一したデザイン
+## 透明度の指定
+
+- カラーコードに透明度は入れられないので`setAlpha()`を使う
+- `color()`関数に色を指定した上で，`setAlpha(100)`で指定
+
+```javascript
+let palette = ["#FF595E", "#FFCA3A", "#8AC926", "#1982C4", "#6A4C93"];
+function setup() {
+  createCanvas(800, 800);
+  background("#F9F9F9");
+  noStroke();
+  for (let i = 0; i < 200; i++) {
+    col = color(random(palette));
+    col.setAlpha(random(255));
+    fill(col);
+    ellipse(random(width), random(height), random(20, 60));
+  }
+}
+```
+
+
+---
+
+## 例：4色で統一したデザイン
+
+- 図形に3色 + 背景1色(ライトグリーン)で4色のパターンの例
 
 ```javascript
 let colors = ["#2E86AB", "#F6C667", "#E63946"];
@@ -403,6 +448,26 @@ function setup() {
   }
 }
 ```
+
+---
+
+## 例：4色で統一したデザイン + 図形の透明度指定
+
+```javascript
+let colors = ["#64A891", "#B5DAE1", "#F2EA83"];
+function setup() {
+  createCanvas(800, 800);
+  background("#6C549B");
+  noStroke();
+  for (let i = 0; i < 400; i++) {
+    col = color(random(colors));
+    col.setAlpha(random(50, 255));
+    fill(col);
+    ellipse(random(width), random(height), random(10, 50));
+  }
+}
+```
+
 
 ---
 
@@ -430,24 +495,24 @@ function setup() {
 ## lerp()とは？
 
 - **linear interpolation（線形補間）** の略  
-- 2つの値の間を割合で求める関数  
+- 2つの値の間を割合で求める関数（第1引数,第2引数の間の値を第3引数で指定）
 - `lerp(start, stop, amt)`  
   - `start`: 開始値  
   - `stop`: 終了値  
   - `amt`: 補間割合（0〜1）
 
 ```javascript
-let a = lerp(0, 100, 0.5); // → 50
-let b = lerp(10, 20, 0.2); // → 12
+let a = lerp(0, 10, 0.5); // → 5
+let b = lerp(0, 10, 0.2); // → 2
 ```
 
 ---
 
-## lerp()のイメージ
+## lerp()の利用例
 
 - 「0」と「100」の間を割合で進む  
 - `amt = 0` → 開始値、`amt = 1` → 終了値  
-- 中間の`0.5`ならちょうど真ん中！
+- 中間の`0.5`ならちょうど真ん中
 
 ```javascript
 function setup() {
@@ -465,26 +530,29 @@ function setup() {
 
 ## lerp()を繰り返して使う
 
-- ループ内で `amt` を少しずつ変えると、なめらかな変化が作れる  
-- 数値や位置、サイズなどに応用可能！
+- 数値や位置、サイズをなめらかに変化させる
 
 ```javascript
 function setup() {
-  createCanvas(400, 100);
+  createCanvas(400, 600);
   background(255);
   noStroke();
   for (let i = 0; i < 20; i++) {
-    let x = lerp(50, 350, i / 19);
-    let s = lerp(10, 40, i / 19);
-    fill(100, 150, 255);
-    ellipse(x, 50, s);
+    let h = lerp(50, height - 150, i / 19);
+    let s = lerp(10, 200, i / 19);
+    let a = lerp(10, 50, i / 19);
+    fill(0, a);
+    ellipse(width/2, h, s);
   }
 }
 ```
 
+![bg right:35% w:90mm](./img/第二回/lerp_gradient.png)
+
 ---
 
-## lerpColor()で色を補間する
+## lerpColor()で色を補間したグラデーション
+
 
 ```javascript
 function setup() {
@@ -501,22 +569,6 @@ function setup() {
 }
 ```
 
----
-
-## HSBで滑らかな色の変化を作る
-
-```javascript
-function setup() {
-  createCanvas(400, 400);
-  colorMode(HSB, 360, 100, 100);
-  noStroke();
-  for (let y = 0; y < height; y++) {
-    let h = map(y, 0, height, 0, 360);
-    stroke(h, 80, 100);
-    line(0, y, width, y);
-  }
-}
-```
 
 ---
 
@@ -615,14 +667,61 @@ function mousePressed(){
 
 ---
 
+## 例：半透明になるグラデーションの背景
+
+```javascript
+function setup() {
+  createCanvas(1240, 1754); background(255);
+  c1 = color("#FF9A8B"); c2 = color("#FF9A8B"); c2.setAlpha(0); //透明度0の同色
+  const headerH = height * 0.4; // 上から40%をグラデーションに
+  for (let y = 0; y < headerH; y++) {
+    let inter = map(y, 0, headerH, 0, 1);
+    stroke(lerpColor(c1, c2, inter));
+    line(0, y, width, y);
+  }
+  noStroke(); fill(255);
+  for (let i = 0; i < 150; i++) {
+    ellipse(random(width), random(headerH), random(20, 60));
+  }
+}
+function mousePressed(){
+  saveCanvas("Gradiation_Poster","png");
+}
+```
+
+---
+
+## 例：図形の描画位置によって透明度を変える
+```javascript
+function setup() {
+  createCanvas(1240, 1754);//A4(150dpi)
+  background("#f8edea"); noStroke();
+  rectMode(CENTER);
+  colors = ["#bcd4e2","#518bb3","#053351"]; // 青ベースの配色
+  for (let i = 0; i < 300; i++) {
+    col = color(random(colors));
+    let x = random(width); let y = random(height);
+    Alpha = map(y, 0, height, 200, -50);// 下の位置での描画になるほど透明に
+    col.setAlpha(Alpha);
+    fill(col);
+    ellipse(x, y, random(5, 100));
+  }
+}
+function mousePressed(){
+  saveCanvas("Gradiation_Object","png");
+}
+```
+
+---
+
 
 # まとめ
 
-- **RGBモード**：光の三原色。数値で正確に指定できる  
+- **RGBモード**：光の三原色。数値で正確に指定  
 - **HSBモード**：色味・鮮やかさ・明るさを直感的に調整  
-- **カラーコード**：デザインやWebと親和性が高い  
-- **配色のコツ**を意識してバランスを取る  
-- **グラデーション**で滑らかな色のつながりを表現できる  
+- **カラーコード**：デザインやWebと親和性が高い色の値
+- **配色パターン**：Hueの範囲やカラーコードの限定による色の限定
+- **グラデーション表現**：図形やキャンバス全体で滑らかな色のつながりを作る
 
 ---
 
@@ -630,10 +729,16 @@ function mousePressed(){
 
 ---
 
-## カラーコード参考サイト(2色パターン):[Pigment](https://pigment.shapefactory.co/)
+## カラーパターンの参考(2色パターン):[Pigment](https://pigment.shapefactory.co/)
 
 - Pigment=顔料・インクのことで、鮮やかで強い色のパターンが作れる
 
 <img src="./img/第二回/Pigment.png" width="900" class="center-img">
 
 ---
+
+## カラーパターンの参考:[COOLORS](https://coolors.co/)
+
+- ベースカラーを指定してカラーパターンを提案してくれるサイト
+
+<img src="./img/第二回/COOLORS.png" width="1000" class="center-img">
