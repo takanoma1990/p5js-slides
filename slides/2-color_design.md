@@ -60,7 +60,7 @@ footer: 色のデザイン
    - Webカラー / 配色のコツ / 統一デザイン  
 - グラデーション表現
    - `lerpColor()` / HSBによる滑らかな色変化  
-- 演習：グラフィックを画像を書き出す
+- 演習：グラフィックを画像を書き出す(壁紙やポスター風のデザイン)
 
 ---
 
@@ -496,10 +496,10 @@ function setup() {
 
 - **linear interpolation（線形補間）** の略  
 - 2つの値の間を割合で求める関数（第1引数,第2引数の間の値を第3引数で指定）
-- `lerp(start, stop, amt)`  
+- `lerp(start, stop, amount)`  
   - `start`: 開始値  
   - `stop`: 終了値  
-  - `amt`: 補間割合（0〜1）
+  - `amount`: 補間割合（0〜1）
 
 ```javascript
 let a = lerp(0, 10, 0.5); // → 5
@@ -538,16 +538,17 @@ function setup() {
   background(255);
   noStroke();
   for (let i = 0; i < 20; i++) {
-    let h = lerp(50, height - 150, i / 19);
-    let s = lerp(10, 200, i / 19);
-    let a = lerp(10, 50, i / 19);
-    fill(0, a);
-    ellipse(width/2, h, s);
+    let y = lerp(100, height - 150, i / 19);  // 縦方向の位置
+    let s = lerp(20, 200, i / 19);  // サイズ
+    let r = lerp(50, 255, i / 19);  // 赤みが増す
+    let a = lerp(0, 100, i / 19);  // 透明→不透明へ
+    fill(r, 100, 100, a);
+    ellipse(width / 2, y, s);
   }
 }
 ```
 
-![bg right:35% w:90mm](./img/第二回/lerp_gradient.png)
+![bg right:35% w:90mm](./img/第二回/lerp_demo.png)
 
 ---
 
