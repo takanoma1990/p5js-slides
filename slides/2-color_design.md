@@ -209,8 +209,8 @@ function setup() {
 
 ![bg right:43% w:100mm](./img/第二回/hsb_rect_alpha.png)
 
----
 
+<!-- 
 ## HSBで滑らかな色の変化を作る
 
 - `map()` ：値を別の範囲に変換
@@ -230,7 +230,7 @@ function setup() {
 }
 ```
 
-![bg right:43% w:100mm](./img/第二回/hsb_gradient.png)
+![bg right:43% w:100mm](./img/第二回/hsb_gradient.png) -->
 
 ---
 
@@ -310,7 +310,7 @@ function setup() {
 
   background(0, 0, 95);
   for (let i = 0; i < 100; i++) {
-    let h = Hue[int(random(2))];
+    let h = random(Hue);//配列の要素をランダムに選択
     fill(h, 80, 100);
     rect(random(width), random(height), random(10, 50));
   }
@@ -331,22 +331,12 @@ function setup() {
   Hue[2] = (Hue[0] + 240) % 360; // トライアド2
   background(0, 0, 95);
   for (let i = 0; i < 100; i++) {
-    let h = Hue[int(random(3))]; // 三色をランダムに選択
+    let h = random(Hue);//3色の要素をランダムに選択
     fill(h, 80, 100);
     rect(random(width), random(height), random(10, 50));
   }
 ...
 ```
-
----
-
-## HSBを使った色相の可視化応用
-
-- **色相 (Hue)** を変化させることで、カテゴリ・連続変数・時系列データの違いを示せる  
-- 可視化でよく使われる例：  
-  - 極座標ヒートマップ：色相を角度／時間にマッピング  
-  - 散布図でカテゴリを色相で区別  
-  - 時系列グラフで時間経過を色相の変化で表現  
 
 ---
 
