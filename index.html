@@ -53,7 +53,12 @@
       text-align: center;
       transition: all 0.25s ease;
       border: 1.5px solid #f0e4c8;
+
+      /* ▼ここを追加 */
+      display: flex;
+      flex-direction: column;
     }
+
 
     .card:hover {
       border-color: #d9c38c; /* 落ち着いた色に */
@@ -72,16 +77,21 @@
       margin-bottom: 1em;
     }
 
+    
     .card a {
       display: inline-block;
       text-decoration: none;
-      background: #b89c5a; /* ボタン初期色：淡いブラウン */
+      background: #b89c5a;
       color: #fff;
       font-weight: bold;
       padding: 8px 16px;
       border-radius: 8px;
       transition: background 0.25s ease;
+
+      /* ▼ここを追加（カード内の下に揃える） */
+      margin-top: auto;
     }
+
 
     .card a:hover {
       background: #a48748; /* ホバーで少し濃くする */
@@ -136,19 +146,19 @@
   <main>
     <div class="card">
       <h2>第1回：p5.js入門と図形</h2>
-      <p>p5.jsの基本文法と図形描画を学びます。</p>
+      <p>p5.jsの基本文法と図形の描画</p>
       <a href="slides/1-intro.html">スライドを見る</a>
     </div>
 
     <div class="card">
       <h2>第2回：色のデザイン</h2>
-      <p>RGB・HSB・カラーパレットを使った表現。</p>
+      <p>RGB・HSB・カラーコードの利用</p>
       <a href="slides/2-color_design.html">スライドを見る</a>
     </div>
 
     <div class="card">
       <h2>第3回：図形と構成</h2>
-      <p>形の組み合わせとレイアウトデザインを考えます。</p>
+      <p>準備中</p>
       <a href="slides/shape_design.html">スライドを見る</a>
     </div>
   </main>
