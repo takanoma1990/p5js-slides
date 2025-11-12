@@ -513,12 +513,12 @@ function setup() {
   createCanvas(400, 600);
   background(255);
   noStroke();
-  for (let i = 0; i < 20; i++) {
-    let s = lerp(20, 200, i / 19);  // サイズ
-    let r = lerp(50, 255, i / 19);  // 赤みが増す
-    let a = lerp(0, 100, i / 19);  // 透明→不透明へ
+  for (let y = 0; y < 20; y++) {
+    let s = lerp(20, 200, y / 19);  // サイズ
+    let r = lerp(50, 255, y / 19);  // 赤みが増す
+    let a = lerp(0, 100, y / 19);  // 透明→不透明へ
     fill(r, 100, 100, a);
-    ellipse(width / 2, i * 20 + 50, s);
+    ellipse(width / 2, y * 20 + 50, s);
   }
 }
 ```
