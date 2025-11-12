@@ -466,6 +466,25 @@ function setup() {
 }
 ```
 
+---
+
+## カラーデザインの参考サイト
+
+---
+
+## カラーパターンの参考(2色パターン):[Pigment](https://pigment.shapefactory.co/)
+
+- Pigment=顔料・インクのことで、鮮やかで強い色のパターンが作れる
+
+<img src="./img/第二回/Pigment.png" width="900" class="center-img">
+
+---
+
+## カラーパターンの参考:[COOLORS](https://coolors.co/)
+
+- ベースカラーを指定してカラーパターンを提案してくれるサイト
+
+<img src="./img/第二回/COOLORS.png" width="1000" class="center-img">
 
 ---
 
@@ -723,23 +742,3 @@ function mousePressed(){
 - **カラーコード**：デザインやWebと親和性が高い色の値
 - **配色パターン**：Hueの範囲やカラーコードの限定による色の限定
 - **グラデーション表現**：図形やキャンバス全体で滑らかな色のつながりを作る
-
----
-
-## カラーデザインの参考サイト
-
----
-
-## カラーパターンの参考(2色パターン):[Pigment](https://pigment.shapefactory.co/)
-
-- Pigment=顔料・インクのことで、鮮やかで強い色のパターンが作れる
-
-<img src="./img/第二回/Pigment.png" width="900" class="center-img">
-
----
-
-## カラーパターンの参考:[COOLORS](https://coolors.co/)
-
-- ベースカラーを指定してカラーパターンを提案してくれるサイト
-
-<img src="./img/第二回/COOLORS.png" width="1000" class="center-img">
