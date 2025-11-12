@@ -410,7 +410,7 @@ function setup() {
 ## 透明度の指定
 
 - カラーコードに透明度は入れられないので`setAlpha()`を使う
-- `color()`関数に色を指定した上で，`setAlpha(100)`で指定
+- `color()`関数でオブジェクト化してから，`setAlpha()`で指定
 
 ```javascript
 let palette = ["#FF595E", "#FFCA3A", "#8AC926", "#1982C4", "#6A4C93"];
@@ -419,7 +419,7 @@ function setup() {
   background("#F9F9F9");
   noStroke();
   for (let i = 0; i < 200; i++) {
-    col = color(random(palette));
+    col = color(random(palette));//一度カラーオブジェクトに変換
     col.setAlpha(random(255));
     fill(col);
     ellipse(random(width), random(height), random(20, 60));
@@ -471,9 +471,7 @@ function setup() {
 
 # 応用：グラデーション表現
 
----
-
-## 彩度や明度を操作して印象を変える
+<!-- ## 彩度や明度を操作して印象を変える
 
 ```javascript
 function setup() {
@@ -486,7 +484,7 @@ function setup() {
     rect(0, y, width, 1);
   }
 }
-```
+``` -->
 
 ---
 
@@ -516,12 +514,11 @@ function setup() {
   background(255);
   noStroke();
   for (let i = 0; i < 20; i++) {
-    let y = lerp(100, height - 150, i / 19);  // 縦方向の位置
     let s = lerp(20, 200, i / 19);  // サイズ
     let r = lerp(50, 255, i / 19);  // 赤みが増す
     let a = lerp(0, 100, i / 19);  // 透明→不透明へ
     fill(r, 100, 100, a);
-    ellipse(width / 2, y, s);
+    ellipse(width / 2, i * 20 + 50, s);
   }
 }
 ```
