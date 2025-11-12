@@ -149,11 +149,12 @@ function setup() {
 
 ---
 
-## HSBとは
+## HSB
+
 
 - **Hue（色相）**：色味（0〜360°）
+  - カラーホイール（色相環）の角度を指定
   - 例：赤=0°, 緑=120°, 青=240°
-  - 色相を変えると“虹の順番”で色が変化
 - **Saturation（彩度）**：鮮やかさ（0〜100）
   - 0付近=淡い色、100付近=はっきりした色
 - **Brightness（明度）**：明るさ（0〜100）
@@ -270,6 +271,61 @@ function setup() {
 
 ---
 
+## 補色を使う
+
+- 基準色の **180°反対側** の色（補色）を使うと、**強いコントラスト**に
+
+```javascript
+let Hue = [];
+function setup() {
+  createCanvas(400, 400);
+  colorMode(HSB, 360, 100, 100);
+  noStroke();
+  Hue[0] = 100; // 基準色
+  Hue[1] = (Hue[0] + 180) % 360;
+
+  background(0, 0, 95);
+  for (let i = 0; i < 100; i++) {
+    let h = Hue[int(random(2))];
+    fill(h, 80, 100);
+    rect(random(width), random(height), random(10, 50));
+  }
+}
+```
+
+
+---
+
+## トライアドを使う
+
+- **カラーホイール上で120°ずつ離れた3色**を使うと、調和しつつも変化のある配色に
+
+```javascript
+// （前のコードのHueの設定から）
+  Hue[0] = 100; // 基準色
+  Hue[1] = (Hue[0] + 120) % 360; // トライアド1
+  Hue[2] = (Hue[0] + 240) % 360; // トライアド2
+  background(0, 0, 95);
+  for (let i = 0; i < 100; i++) {
+    let h = Hue[int(random(3))]; // 三色をランダムに選択
+    fill(h, 80, 100);
+    rect(random(width), random(height), random(10, 50));
+  }
+...
+```
+
+---
+
+## HSBを使った色相の可視化応用
+
+- **色相 (Hue)** を変化させることで、カテゴリ・連続変数・時系列データの違いを直感的に示せる  
+- 可視化でよく使われる例：  
+  - 極座標ヒートマップ：色相を角度／時間にマッピング  
+  - 散布図でカテゴリを色相で区別  
+  - 時系列グラフで時間経過を色相の変化で表現  
+
+---
+
 # カラーコードによる配色
 
 ---
@@ -350,37 +406,6 @@ function setup() {
 
 ---
 
-## 色の配色のコツ①：色相をそろえる
-
-- 同系色（Hueが近い）でまとめると**安定感が出る**
-- 明度や彩度の差で変化を出す
-
----
-
-## 色の配色のコツ②：補色の活用
-
-- 補色とは、**色相環で反対側の色**  
-  例：青とオレンジ、赤と緑  
-- コントラストが強く、印象的なデザインに
-
----
-
-## 色の配色のコツ③：トーンを意識する
-
-- 明度・彩度をそろえると全体の雰囲気が統一される  
-- 高彩度：ポップ、にぎやか  
-- 低彩度：落ち着き、上品  
-
----
-
-## 色の配色のコツ④：アクセントカラーを使う
-
-- 全体を中間〜低彩度にして  
-  一部に強い色を置くと視線が集まりやすい  
-- 例：グレー背景に赤い円  
-
----
-
 # 応用：グラデーション表現
 
 ---
@@ -396,6 +421,63 @@ function setup() {
     let s = map(y, 0, height, 0, 100);
     fill(200, s, 100); // 彩度だけを変化
     rect(0, y, width, 1);
+  }
+}
+```
+
+---
+
+## lerp()とは？
+
+- **linear interpolation（線形補間）** の略  
+- 2つの値の間を割合で求める関数  
+- `lerp(start, stop, amt)`  
+  - `start`: 開始値  
+  - `stop`: 終了値  
+  - `amt`: 補間割合（0〜1）
+
+```javascript
+let a = lerp(0, 100, 0.5); // → 50
+let b = lerp(10, 20, 0.2); // → 12
+```
+
+---
+
+## lerp()のイメージ
+
+- 「0」と「100」の間を割合で進む  
+- `amt = 0` → 開始値、`amt = 1` → 終了値  
+- 中間の`0.5`ならちょうど真ん中！
+
+```javascript
+function setup() {
+  createCanvas(400, 100);
+  background(255);
+  strokeWeight(6);
+  line(50, 50, 350, 50);
+  let x = lerp(50, 350, 0.5);
+  stroke(255, 0, 0);
+  point(x, 50);
+}
+```
+
+---
+
+## lerp()を繰り返して使う
+
+- ループ内で `amt` を少しずつ変えると、なめらかな変化が作れる  
+- 数値や位置、サイズなどに応用可能！
+
+```javascript
+function setup() {
+  createCanvas(400, 100);
+  background(255);
+  noStroke();
+  for (let i = 0; i < 20; i++) {
+    let x = lerp(50, 350, i / 19);
+    let s = lerp(10, 40, i / 19);
+    fill(100, 150, 255);
+    ellipse(x, 50, s);
   }
 }
 ```
@@ -438,6 +520,102 @@ function setup() {
 
 ---
 
+## 演習：制作したグラフィックを画像として保存する
+
+---
+
+## 画像を書き出す
+
+- `saveCanvas()` を使うと、作品を画像として保存できる  
+- 第1引数で**ファイル名**、第2引数で**形式**（"png"など）を指定  
+
+```javascript
+function setup() {
+  createCanvas(400, 400);
+  background(240);
+  noStroke();
+  for (let i = 0; i < 100; i++) {
+    fill(random(255), random(255), random(255));
+    ellipse(random(width), random(height), random(20, 60));
+  }
+}
+
+function mousePressed() {
+  saveCanvas("my_graphic", "png"); //クリックで保存
+}
+```
+---
+
+## 目的に合わせたキャンバスサイズの指定
+
+- **出力先に合わせてキャンバスサイズを設定する**  
+  - SNS投稿：`1080×1080`  
+  - スマホ壁紙：`1080×1920`  
+  - ポスターA4(300dpi)：`2480×3508`
+  - ポスターA4(150dpi)：`1240×1754`
+
+```javascript
+createCanvas(1080, 1920); // スマホサイズの指定
+background("#F5F5F5");
+```
+
+![bg right:35% w:90mm](./img/第二回/Poster_Image.png)
+
+<div class="footer">
+  <a>* dpi（dots per inch）：解像度のこと。1inchあたりのドット数</a>
+</div>
+
+
+---
+
+## 例：スマホ壁紙サイズの描画（3色パターンのデザイン）
+
+```javascript
+function setup() {
+  createCanvas(1080, 1920);
+  background("#F5F5F5");
+  noStroke();
+  for (let i = 0; i < 300; i++) {
+    fill(random(["#E63946", "#F1FAEE", "#457B9D"]));
+    ellipse(random(width), random(height), random(40, 100));
+  }
+  fill(0);
+  textAlign(CENTER); textStyle(BOLDITALIC); textSize(48);
+  text("COLOR PATTERN DESIGN", width/2, height/2);
+}
+
+function mousePressed(){
+  saveCanvas("Poster_Image","png") // キャンバスをクリックで画像を保存
+}
+```
+
+---
+
+## 例：グラデーション背景とランダムな描画を組み合わせる
+
+```javascript
+function setup() {
+  createCanvas(1240, 1754);//A4(150dpi)
+  let c1 = color("#FF9A8B"); let c2 = color("#8AC6FF");
+  for (let y = 0; y < height; y++) {
+    let inter = map(y, 0, height, 0, 1);
+    stroke(lerpColor(c1, c2, inter));
+    line(0, y, width, y);
+  }
+  noStroke(); fill("#F9F9F9");
+  for (let i = 0; i < 150; i++) {
+    ellipse(random(width), random(height), random(20, 60));
+  }
+}
+
+function mousePressed(){
+  saveCanvas("Gradiation_Poster","png");
+}
+```
+
+---
+
+
 # まとめ
 
 - **RGBモード**：光の三原色。数値で正確に指定できる  
@@ -448,13 +626,14 @@ function setup() {
 
 ---
 
-# 演習課題
-
-1. RGBとHSBの両方でランダムな色のパターンを作ってみる  
-2. 自分の好きな3色を決めてパターンを構成する  
-3. 補色やトーンを意識した配色を試す  
-4. グラデーション背景を活かした作品を作る
+## カラーデザインの参考サイト
 
 ---
 
-## 補足：制作したグラフィックを画像として保存する
+## カラーコード参考サイト(2色パターン):[Pigment](https://pigment.shapefactory.co/)
+
+- Pigment=顔料・インクのことで、鮮やかで強い色のパターンが作れる
+
+<img src="./img/第二回/Pigment.png" width="900" class="center-img">
+
+---
