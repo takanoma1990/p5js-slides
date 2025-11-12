@@ -447,12 +447,12 @@
   <span class="hljs-title function_">createCanvas</span>(<span class="hljs-number">400</span>, <span class="hljs-number">600</span>);
   <span class="hljs-title function_">background</span>(<span class="hljs-number">255</span>);
   <span class="hljs-title function_">noStroke</span>();
-  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> y = <span class="hljs-number">0</span>; y &lt; <span class="hljs-number">20</span>; y++) {
-    <span class="hljs-keyword">let</span> s = <span class="hljs-title function_">lerp</span>(<span class="hljs-number">20</span>, <span class="hljs-number">200</span>, y / <span class="hljs-number">19</span>);  <span class="hljs-comment">// サイズ</span>
-    <span class="hljs-keyword">let</span> r = <span class="hljs-title function_">lerp</span>(<span class="hljs-number">50</span>, <span class="hljs-number">255</span>, y / <span class="hljs-number">19</span>);  <span class="hljs-comment">// 赤みが増す</span>
-    <span class="hljs-keyword">let</span> a = <span class="hljs-title function_">lerp</span>(<span class="hljs-number">0</span>, <span class="hljs-number">100</span>, y / <span class="hljs-number">19</span>);  <span class="hljs-comment">// 透明→不透明へ</span>
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> y = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">20</span>; i++) {
+    <span class="hljs-keyword">let</span> s = <span class="hljs-title function_">lerp</span>(<span class="hljs-number">20</span>, <span class="hljs-number">200</span>, i / <span class="hljs-number">19</span>);  <span class="hljs-comment">// サイズ</span>
+    <span class="hljs-keyword">let</span> r = <span class="hljs-title function_">lerp</span>(<span class="hljs-number">50</span>, <span class="hljs-number">255</span>, i / <span class="hljs-number">19</span>);  <span class="hljs-comment">// 赤みが増す</span>
+    <span class="hljs-keyword">let</span> a = <span class="hljs-title function_">lerp</span>(<span class="hljs-number">0</span>, <span class="hljs-number">100</span>, i / <span class="hljs-number">19</span>);  <span class="hljs-comment">// 透明→不透明へ</span>
     <span class="hljs-title function_">fill</span>(r, <span class="hljs-number">100</span>, <span class="hljs-number">100</span>, a);
-    <span class="hljs-title function_">ellipse</span>(width / <span class="hljs-number">2</span>, y * <span class="hljs-number">20</span> + <span class="hljs-number">50</span>, s);
+    <span class="hljs-title function_">ellipse</span>(width / <span class="hljs-number">2</span>, i * <span class="hljs-number">20</span> + <span class="hljs-number">50</span>, s);
   }
 }
 </code></pre>
