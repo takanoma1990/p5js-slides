@@ -213,12 +213,16 @@ function setup() {
 
 ## HSBで滑らかな色の変化を作る
 
+- `map()` ：値を別の範囲に変換
+- `map(value, start1, stop1, start2, stop2)`
+
 ```javascript
 function setup() {
   createCanvas(400, 400);
   colorMode(HSB, 360, 100, 100);
   noStroke();
   for (let x = 0; x < width; x++) {
+    //キャンバス幅の値を0~360(hue値)に変換
     let h = map(x, 0, width, 0, 360);
     stroke(h, 80, 100);
     line(x, 0, x, height);
@@ -630,6 +634,29 @@ function setup() {
   noStroke();
   for (let i = 0; i < 300; i++) {
     fill(random(["#E63946", "#F1FAEE", "#457B9D"]));
+    ellipse(random(width), random(height), random(40, 100));
+  }
+  fill(0);
+  textAlign(CENTER); textStyle(BOLDITALIC); textSize(48);
+  text("COLOR PATTERN DESIGN", width/2, height/2);
+}
+
+function mousePressed(){
+  saveCanvas("Poster_Image","png") // キャンバスをクリックで画像を保存
+}
+```
+
+---
+
+## 例：16:9の横長のパターン（PCの壁紙やスライドの背景）
+
+```javascript
+function setup() {
+  createCanvas(1600, 900); // 比率が16:9のキャンバスサイズ
+  background("#F5EFE7");
+  noStroke();
+  for (let i = 0; i < 300; i++) {
+    fill(random(["#13579D", "#4DB2D0", "#DC6FA7"]));
     ellipse(random(width), random(height), random(40, 100));
   }
   fill(0);
