@@ -4,13 +4,41 @@
   <meta charset="UTF-8" />
   <title>p5.js 授業スライド一覧</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- ★ p5.js を読み込み（CDN） -->
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
+
   <style>
+    :root {
+      --cream: #fffaf0;
+      --cream-light: #fff7e6;
+      --text-main: #333;
+      --card-border: #f0e4c8;
+      --card-border-hover: #d9c38c;
+      --button: #b89c5a;
+      --button-hover: #a48748;
+    }
+
+    /* ★ 背景用の p5 キャンバスを包むコンテナ */
+    #p5-background {
+      position: fixed;
+      inset: 0;
+      z-index: -1;        /* コンテンツより後ろ */
+      pointer-events: none; /* クリック等を透過させる */
+    }
+
+    /* p5 が勝手に付ける canvas を制御 */
+    #p5-background canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
     body {
       font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
       margin: 0;
       padding: 0;
-      background: #fffaf0; /* クリーム色 */
-      color: #333;
+      background: var(--cream);
+      color: var(--text-main);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -21,8 +49,9 @@
       width: 100%;
       text-align: center;
       padding: 50px 20px 30px;
-      background: #fff7e6; /* 淡いクリーム色 */
+      background: rgba(255, 247, 230, 0.9); /* ★少し透明にして背景をほのかに見せる */
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      backdrop-filter: blur(4px); /* 対応ブラウザならほんのりぼかし */
     }
 
     header h1 {
@@ -46,23 +75,22 @@
     }
 
     .card {
-      background: #fff;
+      background: rgba(255, 255, 255, 0.96); /* ★背景がうっすら透ける */
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
       padding: 24px;
       text-align: center;
       transition: all 0.25s ease;
-      border: 1.5px solid #f0e4c8;
+      border: 1.5px solid var(--card-border);
 
-      /* ▼ここを追加 */
       display: flex;
       flex-direction: column;
     }
 
-
     .card:hover {
-      border-color: #d9c38c; /* 落ち着いた色に */
+      border-color: var(--card-border-hover);
       box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+      transform: translateY(-2px);
     }
 
     .card h2 {
@@ -77,32 +105,30 @@
       margin-bottom: 1em;
     }
 
-    
     .card a {
       display: inline-block;
       text-decoration: none;
-      background: #b89c5a;
+      background: var(--button);
       color: #fff;
       font-weight: bold;
       padding: 8px 16px;
       border-radius: 8px;
       transition: background 0.25s ease;
-
-      /* ▼ここを追加（カード内の下に揃える） */
       margin-top: auto;
     }
 
-
     .card a:hover {
-      background: #a48748; /* ホバーで少し濃くする */
+      background: var(--button-hover);
     }
 
     footer {
       margin: 40px 0 20px;
       font-size: 0.8em;
       color: #666;
+      background: rgba(255, 250, 240, 0.9);
+      padding: 8px 16px;
+      border-radius: 12px;
     }
-
 
     /* ===== スマホ用レイアウト ===== */
     @media (max-width: 768px) {
@@ -138,6 +164,9 @@
 </head>
 
 <body>
+  <!-- ★ 背景用のコンテナ（中身は p5.js が自動で canvas を追加） -->
+  <div id="p5-background"></div>
+
   <header>
     <h1>p5.js 授業スライド一覧</h1>
     <p>クリエイティブ・コーディング入門（全回スライドリンク）</p>
@@ -157,8 +186,8 @@
     </div>
 
     <div class="card">
-      <h2>第3回：図形と構成</h2>
-      <p>準備中</p>
+      <h2>第3回：アニメーションとインタラクション</h2>
+      <p>パーティクルの生成とマウスでの操作</p>
       <a href="slides/shape_design.html">スライドを見る</a>
     </div>
   </main>
@@ -166,5 +195,196 @@
   <footer>
     © 2025 Creative Coding 講義スライド
   </footer>
+
+  <!-- ★ あなたのパーティクルコードを背景用に少しだけ調整したもの -->
+  <script>
+    const num = 250;
+    const node_dist = 80;
+    const dot_alpha_max = 255;
+    const dot_alpha_min = 40;
+    const line_alpha_max = 220;
+    const line_alpha_min = 0;
+    const over = 200;  // 画角外の余白
+
+    let particles = [];
+    let x_min, x_max, y_min, y_max;
+
+    class Particle {
+      constructor(x, y, d, vx = 0, vy = 0) {
+        this.pos = createVector(x, y);
+        this.vel = createVector(vx, vy);
+        this.d = d;
+      }
+      update() {
+        this.vel.limit(2.5);
+        this.pos.add(this.vel);
+      }
+      bounce() {
+        const r = this.d * 0.5;
+        const reflect = 0.9;
+
+        if (this.pos.x < x_min + r) {
+          this.pos.x = x_min + r;
+          this.vel.x *= -reflect;
+        }
+        else if (this.pos.x > x_max - r) {
+          this.pos.x = x_max - r;
+          this.vel.x *= -reflect;
+        }
+        if (this.pos.y < y_min + r) {
+          this.pos.y = y_min + r;
+          this.vel.y *= -reflect;
+        }
+        else if (this.pos.y > y_max - r) {
+          this.pos.y = y_max - r;
+          this.vel.y *= -reflect;
+        }
+      }
+
+      draw(a) {
+        fill(100, a);
+        ellipse(this.pos.x, this.pos.y, this.d, this.d);
+
+      }
+    }
+
+    function initBounds() {
+      x_min = -over;
+      x_max = width + over;
+      y_min = -over;
+      y_max = height + over;
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < num; i++) {
+        const p = new Particle(
+          random(x_min, x_max),
+          random(y_min, y_max),
+          random(5, 10),
+          random(-2, 2),
+          random(-2, 2)
+        );
+        particles.push(p);
+      }
+    }
+
+    let ripples = [];
+
+    function mousePressed() {
+      ripples.push(new Ripple(mouseX, mouseY));
+    }
+
+    // Rippleクラス定義
+    class Ripple {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = 0;
+        this.lifespan = 255;
+        this.lifespan_vel = 0.005
+      }
+
+      update() {
+        this.size += 0.02;
+        this.lifespan -= this.lifespan_vel;
+      }
+
+      display() {
+        noFill();
+        strokeWeight(0.005);
+        stroke(0, this.lifespan);
+        circle(this.x, this.y, this.size);
+        circle(this.x, this.y, this.size * 0.75);
+        circle(this.x, this.y, this.size * 0.5);
+        circle(this.x, this.y, this.size * 0.25);
+      }
+
+      isFinished() {
+        return this.lifespan < 0;
+      }
+    }
+
+
+
+    function setup() {
+      // ★ 背景コンテナに canvas を追加
+      const canvas = createCanvas(windowWidth, windowHeight);
+      canvas.parent("p5-background");
+      noStroke();
+      initBounds();
+      initParticles();
+      
+    }
+
+    function draw() {
+      background(247, 239, 220);
+
+      const nearest = new Array(particles.length).fill(Infinity);
+
+      for (let i = 0; i < particles.length; i++) {
+        const a = particles[i];
+        for (let j = i + 1; j < particles.length; j++) {
+          const b = particles[j];
+          const d = dist(a.pos.x, a.pos.y, b.pos.x, b.pos.y);
+          if (d < nearest[i]) nearest[i] = d;
+          if (d < nearest[j]) nearest[j] = d;
+
+          if (d < node_dist) {
+            const alpha = map(d, 0, node_dist, line_alpha_max, line_alpha_min, true);
+            stroke(100, alpha);
+            strokeWeight(1);
+            line(a.pos.x, a.pos.y, b.pos.x, b.pos.y);
+            noStroke();
+          }
+        }
+
+        rectMode(CENTER);
+        noFill();
+        stroke(200, 10);
+        push();
+        let r_size = 200;
+        translate(mouseX, mouseY);
+        // rotate(frameCount/200+radians(90));
+        // rect(0, 0, r_size, r_size);
+        // rotate(frameCount/200+radians(90));
+        // rect(0, 0, r_size/1.25, r_size/1.25);
+        // rotate(frameCount/200+radians(90));
+        // rect(0, 0, r_size/1.5, r_size/1.5);
+        // rotate(frameCount/200+radians(90));
+        // rect(0, 0, r_size/2, r_size/2);
+        fill(200, 0, 0);
+        ellipse(0, 0, 30);
+        pop();
+
+          for (let i = ripples.length - 1; i >= 0; i--) {
+          ripples[i].update();
+          ripples[i].display();
+
+          // 一定サイズを超えたら配列から削除
+          if (ripples[i].isFinished()) {
+            ripples.splice(i, 1);
+          }
+        }
+      }
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.update();
+        p.bounce();
+        const d = nearest[i];
+        const alpha = isFinite(d)
+          ? map(d, 0, node_dist, dot_alpha_max, dot_alpha_min, true)
+          : dot_alpha_min;
+        p.draw(alpha);
+      }
+    }
+
+    // ★ ウィンドウリサイズ時も全画面に追従
+    function windowResized() {
+      resizeCanvas(windowWidth, windowHeight);
+      initBounds();
+    }
+  </script>
 </body>
 </html>
