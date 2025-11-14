@@ -209,6 +209,37 @@
     let particles = [];
     let x_min, x_max, y_min, y_max;
 
+    let mouseP = [];
+    let p_speed = 0.5;
+
+
+    class mouseParticle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.vx = random(-p_speed, p_speed);
+        this.vy = random(-p_speed, p_speed);
+        this.e_size = random(5, 20);
+        this.life = 255; // 寿命（透明度として使う）
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life -= 2;
+      }
+
+      display() {
+        noStroke();
+        fill(200, this.life);
+        ellipse(this.x, this.y, this.e_size);
+      }
+
+      isDead() {
+        return this.life <= 0;
+      }
+    }
+
     class Particle {
       constructor(x, y, d, vx = 0, vy = 0) {
         this.pos = createVector(x, y);
@@ -269,44 +300,6 @@
       }
     }
 
-    let ripples = [];
-
-    // function mousePressed() {
-    //   ripples.push(new Ripple(mouseX, mouseY));
-    // }
-
-    // Rippleクラス定義
-    class Ripple {
-      constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.size = 0;
-        this.lifespan = 255;
-        this.lifespan_vel = 0.005
-      }
-
-      update() {
-        this.size += 0.02;
-        this.lifespan -= this.lifespan_vel;
-      }
-
-      display() {
-        noFill();
-        strokeWeight(0.005);
-        stroke(0, this.lifespan);
-        circle(this.x, this.y, this.size);
-        circle(this.x, this.y, this.size * 0.75);
-        circle(this.x, this.y, this.size * 0.5);
-        circle(this.x, this.y, this.size * 0.25);
-      }
-
-      isFinished() {
-        return this.lifespan < 0;
-      }
-    }
-
-
-
     function setup() {
       // ★ 背景コンテナに canvas を追加
       const canvas = createCanvas(windowWidth, windowHeight);
@@ -314,7 +307,6 @@
       noStroke();
       initBounds();
       initParticles();
-      
     }
 
     function draw() {
@@ -338,34 +330,6 @@
             noStroke();
           }
         }
-
-        rectMode(CENTER);
-        noFill();
-        stroke(200, 10);
-        push();
-        let r_size = 200;
-        translate(mouseX, mouseY);
-        // rotate(frameCount/200+radians(90));
-        // rect(0, 0, r_size, r_size);
-        // rotate(frameCount/200+radians(90));
-        // rect(0, 0, r_size/1.25, r_size/1.25);
-        // rotate(frameCount/200+radians(90));
-        // rect(0, 0, r_size/1.5, r_size/1.5);
-        // rotate(frameCount/200+radians(90));
-        // rect(0, 0, r_size/2, r_size/2);
-        fill(200, 0, 0);
-        ellipse(0, 0, 30);
-        pop();
-
-          for (let i = ripples.length - 1; i >= 0; i--) {
-          ripples[i].update();
-          ripples[i].display();
-
-          // 一定サイズを超えたら配列から削除
-          // if (ripples[i].isFinished()) {
-          //   ripples.splice(i, 1);
-          // }
-        }
       }
 
       for (let i = 0; i < particles.length; i++) {
@@ -377,6 +341,18 @@
           ? map(d, 0, node_dist, dot_alpha_max, dot_alpha_min, true)
           : dot_alpha_min;
         p.draw(alpha);
+      }
+
+      let randomize = 50;
+      // 新しいパーティクルを中央から追加
+      mouseP.push(new mouseParticle(mouseX, mouseY));  
+      mouseP.push(new mouseParticle(mouseX+random(-randomize,randomize), mouseY+random(-randomize, randomize)));
+      
+
+      // 全てのパーティクルを更新・描画
+      for (let p of mouseP) {
+        p.update();
+        p.display();
       }
     }
 
