@@ -271,9 +271,9 @@
 
     let ripples = [];
 
-    function mousePressed() {
-      ripples.push(new Ripple(mouseX, mouseY));
-    }
+    // function mousePressed() {
+    //   ripples.push(new Ripple(mouseX, mouseY));
+    // }
 
     // Rippleクラス定義
     class Ripple {
@@ -362,9 +362,9 @@
           ripples[i].display();
 
           // 一定サイズを超えたら配列から削除
-          if (ripples[i].isFinished()) {
-            ripples.splice(i, 1);
-          }
+          // if (ripples[i].isFinished()) {
+          //   ripples.splice(i, 1);
+          // }
         }
       }
 
