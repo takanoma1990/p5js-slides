@@ -273,7 +273,7 @@
         this.b = random(255);
       }
       update() {
-        this.vel.limit(2.5);
+        this.vel.limit(1.5);
         this.pos.add(this.vel);
       }
       bounce() {
@@ -327,7 +327,7 @@
         const p = new Particle(
           random(x_min, x_max),
           random(y_min, y_max),
-          random(6, 14),
+          random(2, 10),
           random(-2, 2),
           random(-2, 2)
         );
