@@ -22,8 +22,8 @@
     #p5-background {
       position: fixed;
       inset: 0;
-      z-index: -1;        /* コンテンツより後ろ */
-      pointer-events: none; /* クリック等を透過させる */
+      z-index: -1; /* コンテンツより後ろ */
+      pointer-events: none;
     }
 
     /* p5 が勝手に付ける canvas を制御 */
@@ -49,7 +49,7 @@
       width: 100%;
       text-align: center;
       padding: 50px 20px 30px;
-      background: rgba(255, 247, 230, 0.9); /* ★少し透明にして背景をほのかに見せる */
+      background: rgba(255, 247, 230, 0.7); /* ★少し透明にして背景をほのかに見せる */
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
       backdrop-filter: blur(4px); /* 対応ブラウザならほんのりぼかし */
     }
@@ -75,7 +75,7 @@
     }
 
     .card {
-      background: rgba(255, 255, 255, 0.96); /* ★背景がうっすら透ける */
+      background: rgba(255, 255, 255, 0.8);
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
       padding: 24px;
@@ -190,6 +190,12 @@
       <p>パーティクルの生成とマウスでの操作</p>
       <a href="slides/shape_design.html">スライドを見る</a>
     </div>
+
+    <div class="card">
+      <h2>第4回：音を使った描画</h2>
+      <p>パーティクルの生成とマウスでの操作</p>
+      <a href="slides/shape_design.html">スライドを見る</a>
+    </div>
   </main>
 
   <footer>
@@ -212,6 +218,7 @@
     let mouseP = [];
     let p_speed = 0.5;
 
+    let pre_mouse;
 
     class mouseParticle {
       constructor(x, y) {
@@ -221,6 +228,9 @@
         this.vy = random(-p_speed, p_speed);
         this.e_size = random(5, 20);
         this.life = 255; // 寿命（透明度として使う）
+        this.r = random(255);
+        this.g = random(255);
+        this.b = random(255);
       }
 
       update() {
@@ -231,7 +241,7 @@
 
       display() {
         noStroke();
-        fill(200, this.life);
+        fill(this.r, this.g, this.b, this.life);
         ellipse(this.x, this.y, this.e_size);
       }
 
@@ -307,6 +317,8 @@
       noStroke();
       initBounds();
       initParticles();
+
+      pre_mouse = createVector(width/2, height/2);
     }
 
     function draw() {
@@ -343,10 +355,13 @@
         p.draw(alpha);
       }
 
+
       let randomize = 50;
       // 新しいパーティクルを中央から追加
-      mouseP.push(new mouseParticle(mouseX, mouseY));  
-      mouseP.push(new mouseParticle(mouseX+random(-randomize,randomize), mouseY+random(-randomize, randomize)));
+      if(dist(mouseX, mouseY, pre_mouse.x, pre_mouse.y) > 10){
+        mouseP.push(new mouseParticle(mouseX, mouseY));  
+        mouseP.push(new mouseParticle(mouseX+random(-randomize,randomize), mouseY+random(-randomize, randomize)));
+      }
       
 
       // 全てのパーティクルを更新・描画
@@ -354,6 +369,15 @@
         p.update();
         p.display();
       }
+
+      // 後ろから順に消えてるものを削除
+      for (let i = mouseP.length - 1; i >= 0; i--) {
+        if (mouseP[i].isDead()) {
+          mouseP.splice(i, 1);
+        }
+      }
+
+      pre_mouse = createVector(mouseX, mouseY);
     }
 
     // ★ ウィンドウリサイズ時も全画面に追従
