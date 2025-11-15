@@ -209,7 +209,7 @@
 
   <!-- WEBGL で光る ellipse の背景 -->
   <script>
-    const num = 200;
+    const num = 100;
     const node_dist = 80;
     const dot_strength_max = 255;
     const dot_strength_min = 40;
@@ -301,9 +301,9 @@
         push();
         translate(this.pos.x, this.pos.y, 0);
         noStroke();
-        ambientMaterial(c * 0.2);
+        ambientMaterial(c * 0.9);
         specularMaterial(c, c, c);
-        shininess(40);
+        shininess(100);
         //ellipse(0, 0, this.d);
         sphere(this.d);
         pop();
@@ -350,7 +350,7 @@
       translate(-width / 2, -height / 2, 0);
 
       // ライト設定（マウス位置に白いポイントライト）
-      ambientLight(20);
+      ambientLight(150);
       directionalLight(40, 40, 80, 0, 0, -1);
       pointLight(255, 255, 255, mouseX, mouseY, 200);
 
