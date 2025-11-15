@@ -207,7 +207,7 @@
   <!-- パーティクルコードを背景用に少しだけ調整 -->
   <script>
     const num = 250;
-    const node_dist = 80;
+    const node_dist = 150;
     const dot_alpha_max = 255;
     const dot_alpha_min = 40;
     const line_alpha_max = 220;
@@ -339,7 +339,7 @@
           if (d < node_dist) {
             const alpha = map(d, 0, node_dist, line_alpha_max, line_alpha_min, true);
             stroke(0, 0, 255, alpha);
-            strokeWeight(3);
+            strokeWeight(5);
             line(a.pos.x, a.pos.y, b.pos.x, b.pos.y);
             noStroke();
           }
