@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>p5.js 授業スライド一覧</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- p5.js（CDN） -->
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
+
+  <style>
+    :root {
+      --bg-main: #000000;
+      --text-main: #ffffff;
+      --card-bg: rgba(20, 20, 20, 0.85);
+      --card-border: #333333;
+      --card-border-hover: #4dd0e1;
+      --accent: #4dd0e1;
+      --accent-hover: #00bcd4;
+      --muted: #aaaaaa;
+    }
+
+    /* 背景用の p5 キャンバスを包むコンテナ */
+    #p5-background {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    #p5-background canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    body {
+      font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at top, #202020 0%, #000000 60%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      text-align: center;
+      padding: 50px 20px 30px;
+      background: rgba(0, 0, 0, 0.7);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+    }
+
+    header h1 {
+      color: var(--text-main);
+      font-size: 2em;
+      margin-bottom: 0.2em;
+      letter-spacing: 0.05em;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.95em;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      width: 90%;
+      max-width: 1000px;
+      margin: 40px auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      padding: 24px;
+      text-align: center;
+      transition: all 0.25s ease;
+      border: 1px solid var(--card-border);
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      border-color: var(--card-border-hover);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8);
+      transform: translateY(-3px);
+    }
+
+    .card h2 {
+      color: var(--text-main);
+      font-size: 1.25em;
+      margin-bottom: 0.4em;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 0.9em;
+      margin-bottom: 1em;
+    }
+
+    .card a {
+      display: inline-block;
+      text-decoration: none;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-weight: bold;
+      padding: 8px 16px;
+      border-radius: 999px;
+      transition: all 0.25s ease;
+      margin-top: auto;
+      font-size: 0.9em;
+      letter-spacing: 0.05em;
+    }
+
+    .card a:hover {
+      background: var(--accent);
+      color: #000;
+    }
+
+    footer {
+      margin: 40px 0 20px;
+      font-size: 0.8em;
+      color: var(--muted);
+      background: rgba(0, 0, 0, 0.7);
+      padding: 8px 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    }
+
+    /* スマホ用レイアウト */
+    @media (max-width: 768px) {
+      header {
+        padding: 32px 16px 20px;
+      }
+      header h1 {
+        font-size: 1.6em;
+      }
+      header p {
+        font-size: 0.9em;
+      }
+      main {
+        width: 94%;
+        margin: 24px auto;
+        grid-template-columns: 1fr;
+      }
+      .card {
+        padding: 18px;
+      }
+      .card h2 {
+        font-size: 1.1em;
+      }
+      .card p {
+        font-size: 0.85em;
+      }
+      .card a {
+        width: 100%;
+        box-sizing: border-box;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 背景用コンテナ（中身は p5.js が自動で canvas を追加） -->
+  <div id="p5-background"></div>
+
+  <header>
+    <h1>p5.js 授業スライド一覧</h1>
+    <p>クリエイティブ・コーディング入門（全回スライドリンク）</p>
+  </header>
+
+  <main>
+    <div class="card">
+      <h2>第1回：p5.js入門と図形</h2>
+      <p>p5.jsの基本文法と図形の描画</p>
+      <a href="slides/1-intro.html">スライドを見る</a>
+    </div>
+
+    <div class="card">
+      <h2>第2回：色のデザイン</h2>
+      <p>RGB・HSB・カラーコードの利用</p>
+      <a href="slides/2-color_design.html">スライドを見る</a>
+    </div>
+
+    <div class="card">
+      <h2>第3回：アニメーションとインタラクション</h2>
+      <p>パーティクルの生成とマウスでの操作</p>
+      <a href="slides/shape_design.html">スライドを見る</a>
+    </div>
+
+    <div class="card">
+      <h2>第4回：音を使った描画</h2>
+      <p>準備中</p>
+      <a href="slides/shape_design.html">スライドを見る</a>
+    </div>
+  </main>
+
+  <footer>
+    © 2025 Creative Coding 講義スライド
+  </footer>
+
+  <!-- WEBGL で光る ellipse の背景 -->
+  <script>
+    const num = 200;
+    const node_dist = 80;
+    const dot_strength_max = 255;
+    const dot_strength_min = 40;
+    const line_alpha_max = 150;
+    const line_alpha_min = 0;
+    const over = 200;
+
+    let particles = [];
+    let x_min, x_max, y_min, y_max;
+
+    let mouseP = [];
+    let p_speed = 0.5;
+
+    let pre_mouse;
+
+    class mouseParticle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.vx = random(-p_speed, p_speed);
+        this.vy = random(-p_speed, p_speed);
+        this.e_size = random(5, 20);
+        this.life = 255; // 0〜255
+        this.r = random(150, 255);
+        this.g = random(150, 255);
+        this.b = random(150, 255);
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life -= 3;
+      }
+
+      display() {
+        const b = map(this.life, 0, 255, 0, 255, true);
+        push();
+        translate(this.x, this.y, 40); // 少し手前に
+        noStroke();
+        emissiveMaterial(
+          this.r * (b / 255),
+          this.g * (b / 255),
+          this.b * (b / 255)
+        ); // 自己発光っぽく
+        ellipse(0, 0, this.e_size);
+        pop();
+      }
+
+      isDead() {
+        return this.life <= 0;
+      }
+    }
+
+    class Particle {
+      constructor(x, y, d, vx = 0, vy = 0) {
+        this.pos = createVector(x, y);
+        this.vel = createVector(vx, vy);
+        this.d = d;
+      }
+      update() {
+        this.vel.limit(2.5);
+        this.pos.add(this.vel);
+      }
+      bounce() {
+        const r = this.d * 0.5;
+        const reflect = 0.9;
+
+        if (this.pos.x < x_min + r) {
+          this.pos.x = x_min + r;
+          this.vel.x *= -reflect;
+        }
+        else if (this.pos.x > x_max - r) {
+          this.pos.x = x_max - r;
+          this.vel.x *= -reflect;
+        }
+        if (this.pos.y < y_min + r) {
+          this.pos.y = y_min + r;
+          this.vel.y *= -reflect;
+        }
+        else if (this.pos.y > y_max - r) {
+          this.pos.y = y_max - r;
+          this.vel.y *= -reflect;
+        }
+      }
+
+      draw(strength) {
+        // strength を明るさとして使う
+        const c = strength;
+        push();
+        translate(this.pos.x, this.pos.y, 0);
+        noStroke();
+        ambientMaterial(c * 0.2);
+        specularMaterial(c, c, c);
+        shininess(40);
+        ellipse(0, 0, this.d);
+        pop();
+      }
+    }
+
+    function initBounds() {
+      x_min = -over;
+      x_max = width + over;
+      y_min = -over;
+      y_max = height + over;
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < num; i++) {
+        const p = new Particle(
+          random(x_min, x_max),
+          random(y_min, y_max),
+          random(6, 14),
+          random(-2, 2),
+          random(-2, 2)
+        );
+        particles.push(p);
+      }
+    }
+
+    function setup() {
+      // WEBGL モードでキャンバス作成
+      const canvas = createCanvas(windowWidth, windowHeight, WEBGL);
+      canvas.parent("p5-background");
+      noStroke();
+      initBounds();
+      initParticles();
+
+      pre_mouse = createVector(width / 2, height / 2);
+    }
+
+    function draw() {
+      background(0);
+
+      // 2D っぽい座標系にする（左上が 0,0）
+      push();
+      translate(-width / 2, -height / 2, 0);
+
+      // ライト設定（マウス位置に白いポイントライト）
+      ambientLight(20);
+      directionalLight(40, 40, 80, 0, 0, -1);
+      pointLight(255, 255, 255, mouseX, mouseY, 200);
+
+      const nearest = new Array(particles.length).fill(Infinity);
+
+      // エッジ（線）計算
+      for (let i = 0; i < particles.length; i++) {
+        const a = particles[i];
+        for (let j = i + 1; j < particles.length; j++) {
+          const b = particles[j];
+          const d = dist(a.pos.x, a.pos.y, b.pos.x, b.pos.y);
+          if (d < nearest[i]) nearest[i] = d;
+          if (d < nearest[j]) nearest[j] = d;
+
+          if (d < node_dist) {
+            const alpha = map(d, 0, node_dist, line_alpha_max, line_alpha_min, true);
+            // ラインはライトを受けないので普通に stroke
+            stroke(120, alpha);
+            strokeWeight(1);
+            line(a.pos.x, a.pos.y, b.pos.x, b.pos.y);
+            noStroke();
+          }
+        }
+      }
+
+      // パーティクル本体（光る ellipse）
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.update();
+        p.bounce();
+        const d = nearest[i];
+        const strength = isFinite(d)
+          ? map(d, 0, node_dist, dot_strength_max, dot_strength_min, true)
+          : dot_strength_min;
+        p.draw(strength);
+      }
+
+      // マウスで発生する光るパーティクル
+      let randomize = 50;
+      if (dist(mouseX, mouseY, pre_mouse.x, pre_mouse.y) > 10) {
+        mouseP.push(new mouseParticle(mouseX, mouseY));
+        mouseP.push(
+          new mouseParticle(
+            mouseX + random(-randomize, randomize),
+            mouseY + random(-randomize, randomize)
+          )
+        );
+      }
+
+      for (let p of mouseP) {
+        p.update();
+        p.display();
+      }
+
+      for (let i = mouseP.length - 1; i >= 0; i--) {
+        if (mouseP[i].isDead()) {
+          mouseP.splice(i, 1);
+        }
+      }
+
+      pre_mouse = createVector(mouseX, mouseY);
+
+      pop(); // translate を戻す
+    }
+
+    function windowResized() {
+      resizeCanvas(windowWidth, windowHeight);
+      initBounds();
+    }
+  </script>
+</body>
+</html>
