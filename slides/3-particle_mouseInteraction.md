@@ -23,11 +23,9 @@ footer: パーティクルとインタラクション
 ## 今日の内容
 
 - パーティクルの生成
-  - クラスでパーティクルを定義
-  - 生成 → 動き → 消える流れ  
-- パーティクルの動きと印象
-  - ゆっくり動く／速く動く表現の違い
-  - 操作感・インタラクションへの影響
+  - クラスでパーティクルを定義する
+  - 自律的に動くパーティクルの設計
+  - 生成されては消えていくパーティクルの設計
 - 応用：マウスを使ったインタラクション
   - `mouseX`, `mouseY` で位置に応じた描画
   - `dist()` を使ったサイズ・色の変化  
@@ -306,7 +304,7 @@ function draw(){
 
 ---
 
-## [クリック中のみパーティクルを出す](https://editor.p5js.org/takano_ma/sketches/nBo9cSMmE)
+## [クリック中のみパーティクルを出す](https://editor.p5js.org/takano_ma/sketches/m1V4epZEA)
 
 - `mouseIsPressed`でクリックの状態をブール値で取得
   - クリック中のみ描画するようにできる
@@ -322,9 +320,7 @@ function draw() {
 }
 ```
 
-
 ---
-
 ## マウスの動きを検出する処理を加える
 
 - `pre_x`, `pre_y`を用意して前フレームのマウスの位置を保存
@@ -354,238 +350,104 @@ function draw() {
 
 ---
 
-# 4. パーティクルの動きと印象の違い
+# アレンジしてみる
+
 
 ---
 
-## 動き方による印象の違い
+## アレンジ例：[色をカラフルにする](https://editor.p5js.org/takano_ma/sketches/210hshago)
 
-- **ゆっくり・なめらか**な動き
-  - 落ち着いた・やわらかい・幻想的
-  - バックグラウンドや待機画面などに向いている
-- **速く・激しい**動き
-  - 元気・緊張感・エネルギッシュ
-  - ゲームのエフェクトやアラート表現に向いている
-- 速度だけでなく
-  - 軌道（まっすぐ / ジグザグ / ランダムウォーク）
-  - 重力や風（加速度）の有無  
-  も印象を大きく変える
+- HSBモードにして色相をランダムに指定
+- `setup()`で`colorMode(HSB, 360, 100, 100, 255)`
+  - アルファはlifespanに合わせて255の範囲に指定
+- `constructor()`に`this.hue = random(360)`を追加
+  - `display()`メソッド内で色の指定部分に反映
+  - `fill(this.hue, 80, 100, this.lifespan);`
 
 ---
 
-## 例1：ゆっくり漂うパーティクル
+## アレンジ例：[色んな図形を生成](https://editor.p5js.org/takano_ma/sketches/0zv0b926K)
 
-- 下方向にゆっくり落ちる → 「ふわっとした」印象
+- `display()`内部で描画する図形の種類を変える
+- `this.shapeType = int(random(3))`で図形を初期設定する
 
 ```javascript
-let particlesSlow = [];
-
-class SlowParticle {
-  constructor() {
-    this.x = random(width);
-    this.y = random(-50, 0);
-    this.vx = random(-0.3, 0.3);
-    this.vy = random(0.2, 0.8);
-    this.size = random(10, 30);
-  }
-
-  update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    if (this.y > height + 20) {
-      this.y = random(-50, 0);
-      this.x = random(width);
+    if (this.shapeType === 0) {
+      ellipse(this.x, this.y, this.e_size);
+    } else if (this.shapeType === 1) {
+      rectMode(CENTER);
+      rect(this.x, this.y, this.e_size);
+    } else {
+      triangle(
+        this.x, this.y - this.e_size / 2,
+        this.x - this.e_size / 2, this.y + this.e_size / 2,
+        this.x + this.e_size / 2, this.y + this.e_size / 2
+      );
     }
-  }
-
-  display() {
-    noStroke();
-    fill(200, 230, 255, 180);
-    ellipse(this.x, this.y, this.size);
-  }
-}
-
-function setup() {
-  createCanvas(600, 400);
-  for (let i = 0; i < 60; i++) {
-    particlesSlow.push(new SlowParticle());
-  }
-}
-
-function draw() {
-  background(10, 20, 40);
-  for (let p of particlesSlow) {
-    p.update();
-    p.display();
-  }
-}
 ```
 
 ---
 
-## 例2：すばやく弾けるパーティクル
+## アレンジ例：[ランダムな文字列を表示](https://editor.p5js.org/takano_ma/sketches/sfWgMTILK)
 
-- 急に飛び出してすぐ消える → アクションや爆発のような印象
+- グローバル変数で文字列の配列を用意
+  - `let words = ["Data","AI","Model", "Python"];`
+- `constructor()`で配列から文字列をランダムに読み込み
+  - `this.text = random(words);`
+- `display()`でテキストを描画
+  - `text(this.text, this.x, this.y); `
 
-```javascript
-let burst = [];
+---
 
-class BurstParticle {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    let angle = random(TWO_PI);
-    let speed = random(3, 8);
-    this.vx = cos(angle) * speed;
-    this.vy = sin(angle) * speed;
-    this.life = 255;
-  }
 
-  update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    this.life -= 10;
-  }
+## アレンジ例：[ランダムな文字列を表示+グラデーション背景](https://editor.p5js.org/takano_ma/sketches/b5reEwCqb)
 
-  display() {
-    noStroke();
-    fill(255, 200, 50, this.life);
-    ellipse(this.x, this.y, 6);
-  }
-
-  isDead() {
-    return this.life <= 0;
-  }
-}
-
-function mousePressed() {
-  // クリックした場所から一気に噴き出す
-  for (let i = 0; i < 80; i++) {
-    burst.push(new BurstParticle(mouseX, mouseY));
-  }
-}
-
-function draw() {
-  background(0);
-  for (let p of burst) {
-    p.update();
-    p.display();
-  }
-
-  for (let i = burst.length - 1; i >= 0; i--) {
-    if (burst[i].isDead()) {
-      burst.splice(i, 1);
-    }
-  }
-}
-```
+- 前回の授業のグラデーションを背景として利用
 
 ---
 
 # まとめ
 
-- マウス座標（`mouseX`, `mouseY`）や `dist()` を使うと  
-  → 位置に応じたインタラクション表現ができる
-- パーティクルは
-  - 「位置・速度・寿命」を持つ小さな点の集合
-  - クラスと配列で管理すると扱いやすい
-- 動きのパラメータ（速度・方向・重力など）を変えることで
-  - 「落ち着いた」「激しい」「軽い」「重い」など  
-    インターフェースの印象をコントロールできる
-
----
-
-## 演習
-
-1. マウスの動きに応じて  
-   - 大きさ・色・透明度が変わる「ブラシ」を作る  
-2. パーティクルクラスを使って  
-   - マウスクリックで噴き出すエフェクトをデザインする  
-3. 動きのパラメータ（速度・重力・寿命など）を変えて  
-   - 「落ち着いた」「激しい」など、印象が変わるパターンを2種類以上つくる  
+- パーティクルで「位置・速度・寿命」を持つ小さな点の集合
+  - クラスと配列で管理して扱う
+  - 形や色や動きなどをアレンジの仕方は多様にある
+- マウス入力を使うことで簡易的なインタラクションを設計できる
+  - `mouseX, mouseY`で位置情報
+  - `dist()`を使うことで移動距離を計算
 
 
 ---
 
-
-
-# マウスを使った描画
+# 補足資料：windowresizeとfullscreenモード
 
 ---
 
-## マウス座標で図形を描く
 
-- p5.js では、キャンバス内のマウス位置を取得できる
-  - `mouseX`：マウスのX座標
-  - `mouseY`：マウスのY座標 
-- `draw()` 内で `ellipse(mouseX, mouseY, ...)` とすると、マウスカーソルに追従した円を描くことができる（簡易的な「絵かきツール」になる）
-- `mouseIsPressed`でクリック状態をブール値で取得できる
+## 補足：windowResized()によるキャンバスサイズの更新
 
----
-
-## 例：マウスクリックで描画
+- キャンバスサイズをリアルタイムに調整してくれる関数
+  - `resizeCanvas(windowWidth, windowHeight);`で自動調整
 
 ```javascript
-function setup() {
-  createCanvas(600, 400);
-  background(255);
-}
-
-function draw() {
-  if (mouseIsPressed) {
-    ellipse(mouseX, mouseY, 20);
-  }
+// 一番下のあたりに追加
+function windowResized(){
+  resizeCanvas(windowWidth, windowHeight);
 }
 ```
 
-![bg right:40% w:100mm](./img/第三回/mouse_draw.png)
-
-
 ---
 
-## 距離 `dist()` を使ったインタラクション
+# 補足：fullscreenの利用
 
-- `dist(x1, y1, x2, y2)`：2点間の距離を返す関数
-  
-
----
-
-## 例：マウスの速度で円の大きさを変える
+- `fullscreen()`でブラウザ画面のキャンバスサイズに
+- `keyPressed()`関数を使うことで，特定キー操作での変更が可能
+  - `if(key == "f")` などで特定のキー入力を処理を紐付け
 
 ```javascript
-let previous_x, previous_y;
-
-function setup() {
-  createCanvas(600, 400);
-  background(255);
-}
-
-function draw() {
-  if (mouseIsPressed) {
-    //マウスの移動距離を円の直径に反映
-    let diameter = dist(mouseX, mouseY, previous_x, previous_y);
-    ellipse(mouseX, mouseY, diameter);
+function keyPressed(){
+  if(key == "f"){
+    let fs = fullscreen();
+    fullscreen(!fs);
   }
-  //前フレームのマウスの位置情報を保存
-  previous_x = mouseX;
-  previous_y = mouseY;
 }
 ```
-
-![bg right:25% w:70mm](./img/第三回/mouse_draw_distsize.png)
-
----
-
-# 補足：windowresizeによるキャンバスサイズの更新
-
-
----
-
-# fullscreenの利用
-
-- keypressed関数を使う
-- key == f などで特定のキー入力を処理を紐付け
-
-
----
-
