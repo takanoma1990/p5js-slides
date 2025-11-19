@@ -16,7 +16,7 @@ footer: パーティクルとインタラクション
 </style>
 
 # 第3回 クリエイティブ・コーディング入門  
-## パーティクルとマウスインタラクション
+## アニメーションとインタラクション
 
 ---
 
@@ -34,72 +34,37 @@ footer: パーティクルとインタラクション
 
 ---
 
-# windowresizeによるキャンバスサイズの自動調整
 
-
----
-
-# fullscreenの利用
-
-- keypressed関数を使う
-- key == f などで特定のキー入力を処理を紐付け
-
-
----
-
-# 1. マウスを使った描画
+# マウスを使った描画
 
 ---
 
 ## マウス座標で図形を描く
 
-- p5.js では、常に現在のマウス位置が  
-  - `mouseX`：マウスのX座標  
-  - `mouseY`：マウスのY座標  
- で取得できる
-- `draw()` 内で `ellipse(mouseX, mouseY, ...)` とすると  
-  → マウスカーソルに追従して円が描かれる
-- `mouseIsPressed` を使うと  
-  → クリックしている間だけ「お絵かきツール」のように描画できる
+- p5.js では、キャンバス内のマウス位置を取得できる
+  - `mouseX`：マウスのX座標
+  - `mouseY`：マウスのY座標 
+- `draw()` 内で `ellipse(mouseX, mouseY, ...)` とすると、マウスカーソルに追従した円を描くことができる（簡易的な「絵かきツール」になる）
+- `mouseIsPressed`でクリック状態をブール値で取得できる
 
 ---
 
-## 例：マウスで線を描くシンプルなブラシ
+## 例：マウスクリックで描画
 
 ```javascript
 function setup() {
   createCanvas(600, 400);
-  background(255);
-  noStroke();
 }
 
 function draw() {
   if (mouseIsPressed) {
-    fill(50, 100, 200, 80); // 少し透ける
     ellipse(mouseX, mouseY, 20);
   }
 }
 ```
 
----
+![bg right:40% w:150mm](./img/第三回/mousePressed.png)
 
-## 例：軌跡を残さず「追従する円」
-
-- `background()` を `draw()` 内で毎回描くと  
-  → 前のフレームが消えて、1つの円だけが追従する
-
-```javascript
-function setup() {
-  createCanvas(600, 400);
-  noStroke();
-}
-
-function draw() {
-  background(245);      // 毎フレーム塗り直す
-  fill(50, 150, 200);
-  ellipse(mouseX, mouseY, 40);
-}
-```
 
 ---
 
@@ -164,11 +129,11 @@ function draw() {
 
 ---
 
-# 2. パーティクルの基本
+# パーティクルの生成
 
 ---
 
-## パーティクルとは？
+## [パーティクル](https://editor.p5js.org/takano_ma/sketches/BzEhtzl3e)
 
 - たくさんの「粒（particle）」が集まった表現
   - 小さな円・点・線などの集合
@@ -177,47 +142,38 @@ function draw() {
   - 速度（velocity）
   - 寿命（lifespan）
   を持ち、時間とともに動いて消えていく
-- **1つ1つは単純だが、全体として複雑で豊かな動きになる**
 
 ---
 
-## パーティクルクラスを作る流れ
 
-1. `class Particle { ... }` でパーティクルの「型」を定義
-2. `constructor()` で初期位置や速度、寿命を設定
+---
+
+## パーティクルのクラスを定義する
+
+1. クラスの定義：パーティクルの雛形を作る（`class Particle { ... }` ）
+2. クラスの初期設定：`constructor()` で初期位置や速度、寿命を設定
 3. `update()` で毎フレーム位置や寿命を更新
 4. `display()` で描画
 5. 配列 `particles[]` にたくさん入れて、`for` で回す
 
 ---
 
-## 例：シンプルなパーティクルクラス
+## 例：パーティクル・クラス
 
 ```javascript
-let particles = [];
-
 class Particle {
   constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    this.vx = random(-1, 1);
-    this.vy = random(-1, 1);
-    this.e_size = random(5, 20);
-    this.life = 255; // 寿命（透明度として使う）
+    this.x = x; this.y = y;
+    this.vx = random(-1, 1); this.vy = random(-1, 1);
+    this.e_size = random(5, 20); this.life = 255;
   }
-
   update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    this.life -= 2;
+    this.x += this.vx; this.y += this.vy; this.life -= 1;
   }
-
   display() {
-    noStroke();
-    fill(50, 150, 255, this.life);
+    noStroke(); fill(255, this.life);
     ellipse(this.x, this.y, this.e_size);
   }
-
   isDead() {
     return this.life <= 0;
   }
@@ -563,3 +519,19 @@ function draw() {
    - マウスクリックで噴き出すエフェクトをデザインする  
 3. 動きのパラメータ（速度・重力・寿命など）を変えて  
    - 「落ち着いた」「激しい」など、印象が変わるパターンを2種類以上つくる  
+
+
+---
+
+# windowresizeによるキャンバスサイズの自動調整
+
+
+---
+
+# fullscreenの利用
+
+- keypressed関数を使う
+- key == f などで特定のキー入力を処理を紐付け
+
+
+---
