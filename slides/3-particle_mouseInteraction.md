@@ -16,197 +16,267 @@ footer: パーティクルとインタラクション
 </style>
 
 # 第3回 クリエイティブ・コーディング入門  
-## アニメーションとインタラクション
+## クラスを使ったアニメーション
 
 ---
 
 ## 今日の内容
 
-- マウスを使った描画
-  - `mouseX`, `mouseY` で位置に応じた描画
-  - `dist()` を使ったサイズ・色の変化  
 - パーティクルの生成
   - クラスでパーティクルを定義
   - 生成 → 動き → 消える流れ  
 - パーティクルの動きと印象
   - ゆっくり動く／速く動く表現の違い
   - 操作感・インタラクションへの影響
+- 応用：マウスを使ったインタラクション
+  - `mouseX`, `mouseY` で位置に応じた描画
+  - `dist()` を使ったサイズ・色の変化  
 
 ---
 
 
-# マウスを使った描画
+# パーティクルによるアニメーション
 
 ---
 
-## マウス座標で図形を描く
+## [キャンバスを自由に動くパーティクル](https://editor.p5js.org/takano_ma/sketches/PZPhxKah6)（←サンプルコード）
 
-- p5.js では、キャンバス内のマウス位置を取得できる
-  - `mouseX`：マウスのX座標
-  - `mouseY`：マウスのY座標 
-- `draw()` 内で `ellipse(mouseX, mouseY, ...)` とすると、マウスカーソルに追従した円を描くことができる（簡易的な「絵かきツール」になる）
-- `mouseIsPressed`でクリック状態をブール値で取得できる
+- たくさんの「粒（particle）」による描画表現
+  - ellipseを複数描画し、自律的に動かす
+- 専用のクラスを用意して、複数のインスタンスを配列に追加する
+- パーティクルクラスに必要な要素
+  - 位置（position）
+  - 速度（velocity）
 
 ---
 
-## 例：マウスクリックで描画
+## パーティクルのクラスを作る
+
+1. クラスの定義：パーティクルの雛形を作る（`class Particle { ... }` ）
+2. クラスの初期設定：`constructor()` で初期位置や速度を設定する
+3. `update()` で毎フレーム位置を更新する
+4. `display()` で描画する
+5. 配列 `particles[]` にたくさん入れて、`for` で回す
+
+---
+
+# パーティクルクラスの初期設定
+
+- `constructor()`を用意して初期設定の準備
+- インスタンスを作成時に受け取った引数を、初期値としてプロパティに保存
+- `this.`で、各インスタンスごとに固有のプロパティを定義できる
 
 ```javascript
-function setup() {
-  createCanvas(600, 400);
-}
-
-function draw() {
-  if (mouseIsPressed) {
-    ellipse(mouseX, mouseY, 20);
+class Particle{
+  constructor(x, y){ //引数で生成位置を受け取る
+    this.x = x; // x座標
+    this.y = y; // y座標
+    this.vx = random(-1, 1); //x方向の速度
+    this.vy = random(-1, 1); //y方向の速度
+    this.e_size = random(5, 20); //パーティクルの大きさ
   }
 }
 ```
 
-![bg right:40% w:150mm](./img/第三回/mousePressed.png)
-
-
 ---
 
-## 距離 `dist()` を使ったインタラクション
-
-- `dist(x1, y1, x2, y2)`：2点間の距離を返す関数
-- 例：  
-  - 中心から遠いほど大きい円／小さい円  
-  - マウスの位置からの距離で色を変える
-
----
-
-## 例：中心からの距離で円の大きさを変える
+# パーティクルの動きを表現するメソッドを作成
+- `update()`でパーティクルの位置や寿命など、毎フレームの状態変化を処理
+- vx,vy を速度（x方向・y方向の移動量）として位置に加算し、移動させる
+- キャンバスの両端に来たら移動方向を反転させる
 
 ```javascript
+  /* constructorの後に追加 */
+  update() {
+      if(this.x > width || this.x <= 0){
+        this.vx *= -1; //端に来たら逆方向の移動に
+      }
+      if(this.y > height || this.y <= 0){
+        this.vy *= -1; //端に来たら逆方向の移動に
+      }
+      this.x += this.vx;
+      this.y += this.vy;
+  }
+```
+
+---
+
+# パーティクルを描画するメソッドを作成
+- `display()`を作成し、パーティクルの描画処理を記述
+
+```javascript
+  /* update() の後に追加 */
+  display() {
+    noStroke();
+    fill(255);
+    ellipse(this.x, this.y, this.e_size);
+  }
+```
+
+---
+
+## 配列にインスタンスを作成
+- 配列を用意し、`setup()`の中でパーティクルのインスタンスを追加する
+  - 配列には`配列名.push()`で要素を追加できる
+  - `new クラス名(引数)`でインスタンスを作成
+
+```javascript
+let particles = []; //パーティクル用の配列
+let num = 200; //生成する個数を指定
+
 function setup() {
-  createCanvas(600, 400);
-  noStroke();
-}
-
-function draw() {
-  background(240);
-
-  // キャンバス中心からマウスまでの距離
-  let d = dist(width / 2, height / 2, mouseX, mouseY);
-
-  // 距離 d(0〜約350) を サイズ(10〜200) に変換
-  let size = map(d, 0, 350, 10, 200);
-
-  fill(100, 150, 255);
-  ellipse(width / 2, height / 2, size);
-
-  fill(0);
-  textAlign(LEFT, TOP);
-  text("distance: " + nf(d, 1, 1), 10, 10);
+  createCanvas(windowWidth, windowHeight);
+  // for文でnum個のパーティクルのインスタンスを配列に追加
+  for(let i = 0; i < num; i++){
+    particles.push(new Particle(random(width),random(height)));  
+  }
 }
 ```
 
 ---
 
-## 例：マウスに近いほど明るくなる円
+## パーティクルの描画
+
+- `draw()`内で、、配列に入っている各パーティクルに対して描画処理を行う
+  - for文でパーティクルのインスタンスを順に取り出す
+  - `update()`で位置を更新し、`display()`で描画する
 
 ```javascript
-function setup() {
-  createCanvas(600, 400);
-  colorMode(HSB, 360, 100, 100);
-  noStroke();
-}
-
 function draw() {
-  background(0, 0, 15);
-  let d = dist(mouseX, mouseY, width / 2, height / 2);
-
-  // 距離を 0〜100 の明るさにマッピング（遠いと暗く）
-  let b = map(d, 0, 300, 100, 20);
-  b = constrain(b, 20, 100);
-
-  fill(200, 80, b);
-  ellipse(width / 2, height / 2, 200);
+  background(0);
+  for (let p of particles) {
+    p.update();
+    p.display();
+  }
 }
 ```
 
+基本的なパーティクルの表現がこれで完成 
+
+
 ---
 
-# パーティクルの生成
+# パーティクルに寿命をつける
 
 ---
 
-## [パーティクル](https://editor.p5js.org/takano_ma/sketches/BzEhtzl3e)
+## [消えていくパーティクル生成](https://editor.p5js.org/takano_ma/sketches/BzEhtzl3e) （←サンプルコード） 
 
-- たくさんの「粒（particle）」が集まった表現
-  - 小さな円・点・線などの集合
-- 各パーティクルは
+- 先ほどのコードをアレンジして、逐次生成されては消えるパーティクルに
+  - `draw()`内でインスタンスを毎フレーム作成する
+- 各パーティクルの要素に「lifespan」が加わる
   - 位置（position）
   - 速度（velocity）
-  - 寿命（lifespan）
-  を持ち、時間とともに動いて消えていく
-
+  - **寿命（lifespan）** ← 新たなプロパティとして追加
+  
 ---
 
-
----
-
-## パーティクルのクラスを定義する
+## パーティクルのクラスを作る(lifespan有り)
 
 1. クラスの定義：パーティクルの雛形を作る（`class Particle { ... }` ）
 2. クラスの初期設定：`constructor()` で初期位置や速度、寿命を設定
 3. `update()` で毎フレーム位置や寿命を更新
 4. `display()` で描画
-5. 配列 `particles[]` にたくさん入れて、`for` で回す
+5. `draw()`無いで `particles[]`にインスタンスを毎フレーム追加 (**new**)
+6. `lifespan`が0になった要素を配列から削除する(**new**)
 
 ---
 
-## 例：パーティクル・クラス
+# パーティクルクラスの初期設定
+
+- `constructor()`の中に`lifespan`のプロパティを追加
+  - 初期値を255に設定し、アルファ値（透明度）として利用する
+  - 更新時に毎フレーム 1 ずつ減らし、0 以下になったら削除判定に使う
 
 ```javascript
-class Particle {
-  constructor(x, y) {
-    this.x = x; this.y = y;
-    this.vx = random(-1, 1); this.vy = random(-1, 1);
-    this.e_size = random(5, 20); this.life = 255;
-  }
-  update() {
-    this.x += this.vx; this.y += this.vy; this.life -= 1;
-  }
-  display() {
-    noStroke(); fill(255, this.life);
-    ellipse(this.x, this.y, this.e_size);
-  }
-  isDead() {
-    return this.life <= 0;
+class Particle{
+  constructor(x, y){
+    this.x = x;
+    this.y = y;
+    this.vx = random(-1, 1);
+    this.vy = random(-1, 1);
+    this.e_size = random(5, 20);
+    this.lifespan = 255; // 追加：寿命と透明度を兼ねるプロパティ
   }
 }
+```
+
+---
+
+# パーティクルの動きを表現するメソッドを作成
+- `update()`メソッドに、寿命（lifespan）を更新する処理を追加する
+- `lifespan`を毎フレーム減らし、時間経過とともに薄くなって消えるようにする
+
+```javascript
+  /* constructorの後に追加 */
+  update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.lifespan -= 1; // 追加：寿命(透明度)を減らしていく
+  }
+```
+
+---
+
+# パーティクルを描画するメソッドを作成
+- `display()`メソッドで`fill()`のアルファ値にlifespanを反映させる
+  - 寿命に応じて徐々に透明になっていくようにする
+
+```javascript
+  /* update() の後に追加 */
+  display() {
+    noStroke();
+    fill(255, this.lifespan); // 追加：lifespanを透明度として利用
+    ellipse(this.x, this.y, this.e_size);
+  }
+```
+
+---
+
+# パーティクルを削除するためのメソッドを追加
+- `isDead()`を作成し、`lifespan`が0以下になったら`true`を返すようにする
+  - 描画ループの中で寿命切れを判定するために使うメソッド
+
+```javascript
+  /* display() の後に追加 */
+  isDead() {
+    return this.lifespan <= 0;
+  }
 ```
 
 ---
 
 ## パーティクルを動かすメイン部分
 
-- 毎フレーム、全てのパーティクルに対して
-  - `update()` → `display()`
-- 寿命が尽きたものは配列から削除
+- 今回は`draw()`内で、毎フレーム新しいインスタンスを配列に追加する
+  - ここでは、初期位置として`(width/2, height/2)`を指定 
+  - 毎フレーム、中心からパーティクルが生まれて広がっていく表現に
 
 ```javascript
+let particles = [];
+
 function setup() {
-  createCanvas(600, 400);
+  createCanvas(windowWidth, windowHeight);
 }
 
 function draw() {
-  background(20);
+  background(0);
+  particles.push(new Particle(width/2,height/2));//初期位置をキャンバス中央に
+  for (let p of particles) {/*updateとdisplay*/} 
+// 続きは次のページ
+```
 
-  // 新しいパーティクルを中央から追加
-  particles.push(new Particle(width / 2, height / 2));
+---
 
-  // 全てのパーティクルを更新・描画
-  for (let p of particles) {
-    p.update();
-    p.display();
-  }
+## 寿命を判断し、配列から要素を削除していく
 
-  // 後ろから順に消えてるものを削除
-  for (let i = particles.length - 1; i >= 0; i--) {
+- `isDead`が`true`（lifespan が 0 以下）になったかどうかを判定する
+- `true`であれば、`splice()`を使って配列からそのパーティクルを削除する
+  - `splice(i,1)`は「i 番目の要素を 1 つ削除する」という処理
+```javascript
+function draw() {
+    /*中略*/
+    for (let i = particles.length - 1; i >= 0; i--) {
     if (particles[i].isDead()) {
       particles.splice(i, 1);
     }
@@ -216,155 +286,69 @@ function draw() {
 
 ---
 
-# 3. マウスに反応するパーティクル
+# 応用：マウスに反応するパーティクル
 
 ---
 
-## マウス位置からパーティクルを出す
+## [マウス位置からパーティクルを出す](https://editor.p5js.org/takano_ma/sketches/nBo9cSMmE)
 
-- パーティクルの「発生源（エミッタ）」を  
-  キャンバス中央 → マウスの位置に変更すれば
-  - マウスを動かすだけで「光の軌跡」などの表現ができる
-- クリックしているときだけ生成すると
-  - スプレーブラシのようなインタラクションになる
-
----
-
-## 例：マウス位置から出るパーティクル
+- `mouseX`,`mouseY`で、常に更新されるマウスの位置を取得できる
+  - 新しいインスタンスを作る際、その位置を初期値として利用する
 
 ```javascript
-let particles = [];
-
-class Particle {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    this.vx = random(-1, 1);
-    this.vy = random(-2, 0);
-    this.life = 255;
-  }
-
-  update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    this.life -= 4;
-  }
-
-  display() {
-    noStroke();
-    fill(100, 200, 255, this.life);
-    ellipse(this.x, this.y, 8);
-  }
-
-  isDead() {
-    return this.life <= 0;
-  }
-}
-
-function setup() {
-  createCanvas(600, 400);
+function draw(){
   background(0);
-}
+  particles.push(new Particle(mouseX, mouseY));  
 
-function draw() {
-  // クリックしている間パーティクルを追加
-  if (mouseIsPressed) {
-    for (let i = 0; i < 3; i++) {
-      particles.push(new Particle(mouseX, mouseY));
-    }
-  }
-
-  // 半透明背景で残像っぽく
-  fill(0, 30);
-  rect(0, 0, width, height);
-
-  for (let p of particles) {
-    p.update();
-    p.display();
-  }
-
-  for (let i = particles.length - 1; i >= 0; i--) {
-    if (particles[i].isDead()) {
-      particles.splice(i, 1);
-    }
-  }
+  /*以下省略*/ 
 }
 ```
 
 ---
 
-## マウスの動きの速さで変化させる
+## [クリック中のみパーティクルを出す](https://editor.p5js.org/takano_ma/sketches/nBo9cSMmE)
 
-- `pmouseX`, `pmouseY`：1フレーム前のマウス位置
-- `dist(mouseX, mouseY, pmouseX, pmouseY)` で  
-  → どれだけ「速く」動いたかの目安になる
-- これを使って
-  - 速く動かしたときだけ大きいパーティクル
-  - 速いと色が変わる  
-  などのインタラクションが作れる
+- `mouseIsPressed`でクリックの状態をブール値で取得
+  - クリック中のみ描画するようにできる
+
+```javascript
+function draw() {
+  background(0);
+
+  if(mouseIsPressed){
+    particles.push(new Particle(mouseX, mouseY));  
+  }
+  /*以下省略*/ 
+}
+```
+
 
 ---
 
-## 例：マウス速度でパーティクルのサイズを変える
+## マウスの動きを検出する処理を加える
+
+- `pre_x`, `pre_y`を用意して前フレームのマウスの位置を保存
+- `dist(mouseX, mouseY, pre_x, pre_y)` で移動距離(px)を計算
+- ある程度移動したらインスタンスを作成するようにする
+
+---
+
+## [マウスが動いている時にパーティクルを生成](https://editor.p5js.org/takano_ma/sketches/0ImvPHeKY)
 
 ```javascript
-let particles = [];
-
-class Particle {
-  constructor(x, y, s) {
-    this.x = x;
-    this.y = y;
-    this.vx = random(-1, 1);
-    this.vy = random(-1, 1);
-    this.size = s;
-    this.life = 255;
-  }
-
-  update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    this.life -= 4;
-  }
-
-  display() {
-    noStroke();
-    fill(255, 200, 100, this.life);
-    ellipse(this.x, this.y, this.size);
-  }
-
-  isDead() {
-    return this.life <= 0;
-  }
-}
-
-function setup() {
-  createCanvas(600, 400);
-  background(0);
-}
+let pre_x = 0, pre_y = 0;
 
 function draw() {
-  // マウスの移動距離から速度を求める
-  let speed = dist(mouseX, mouseY, pmouseX, pmouseY);
-  let s = map(speed, 0, 50, 5, 40);
-  s = constrain(s, 5, 40);
+  background(0);
 
-  if (mouseIsPressed) {
-    particles.push(new Particle(mouseX, mouseY, s));
+  let distance = dist(mouseX, mouseY, pre_x, pre_y);
+  if(distance > 10){
+    particles.push(new Particle(mouseX, mouseY));  
   }
+  pre_x = mouseX;
+  pre_y = mouseY;
 
-  fill(0, 40);
-  rect(0, 0, width, height);
-
-  for (let p of particles) {
-    p.update();
-    p.display();
-  }
-
-  for (let i = particles.length - 1; i >= 0; i--) {
-    if (particles[i].isDead()) {
-      particles.splice(i, 1);
-    }
-  }
+  /*以下省略*/ 
 }
 ```
 
@@ -523,7 +507,76 @@ function draw() {
 
 ---
 
-# windowresizeによるキャンバスサイズの自動調整
+
+
+# マウスを使った描画
+
+---
+
+## マウス座標で図形を描く
+
+- p5.js では、キャンバス内のマウス位置を取得できる
+  - `mouseX`：マウスのX座標
+  - `mouseY`：マウスのY座標 
+- `draw()` 内で `ellipse(mouseX, mouseY, ...)` とすると、マウスカーソルに追従した円を描くことができる（簡易的な「絵かきツール」になる）
+- `mouseIsPressed`でクリック状態をブール値で取得できる
+
+---
+
+## 例：マウスクリックで描画
+
+```javascript
+function setup() {
+  createCanvas(600, 400);
+  background(255);
+}
+
+function draw() {
+  if (mouseIsPressed) {
+    ellipse(mouseX, mouseY, 20);
+  }
+}
+```
+
+![bg right:40% w:100mm](./img/第三回/mouse_draw.png)
+
+
+---
+
+## 距離 `dist()` を使ったインタラクション
+
+- `dist(x1, y1, x2, y2)`：2点間の距離を返す関数
+  
+
+---
+
+## 例：マウスの速度で円の大きさを変える
+
+```javascript
+let previous_x, previous_y;
+
+function setup() {
+  createCanvas(600, 400);
+  background(255);
+}
+
+function draw() {
+  if (mouseIsPressed) {
+    //マウスの移動距離を円の直径に反映
+    let diameter = dist(mouseX, mouseY, previous_x, previous_y);
+    ellipse(mouseX, mouseY, diameter);
+  }
+  //前フレームのマウスの位置情報を保存
+  previous_x = mouseX;
+  previous_y = mouseY;
+}
+```
+
+![bg right:25% w:70mm](./img/第三回/mouse_draw_distsize.png)
+
+---
+
+# 補足：windowresizeによるキャンバスサイズの更新
 
 
 ---
@@ -535,3 +588,4 @@ function draw() {
 
 
 ---
+
