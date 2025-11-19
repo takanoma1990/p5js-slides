@@ -2,19 +2,17 @@ import pikepdf
 from pikepdf import OutlineItem
 
 # 元PDFと出力PDF
-INPUT_PDF = "2-color_design.pdf"
-OUTPUT_PDF = "2-color_design_with_TOC.pdf"
+INPUT_PDF = "3-particle_mouseInteraction.pdf"
+OUTPUT_PDF = "3-particle_mouseInteraction_with_TOC.pdf"
 
 # 目次にしたい項目（タイトル, ページ番号）※ページ番号は「PDFビューアに表示される番号」
 toc = [
-    ("第2回 クリエイティブ・コーディング入門", 1),
-    ("RGBモードでの色の指定", 3),
-    ("HSBモードでの色の指定", 8),
-    ("カラーコードによる配色", 17),
-    ("カラーデザインの参考サイト", 24),
-    ("応用：グラデーション表現", 27),
-    ("演習：制作したグラフィックを画像として保存する", 31)
-    
+    ("第3回 クリエイティブ・コーディング入門", 1),
+    ("パーティクルによるアニメーション", 4),
+    ("パーティクルに寿命をつける", 12),
+    ("応用：マウスの位置を使ったパーティクル生成", 21),
+    ("演習：パーティクル表現をアレンジしてみる", 26),
+    ("補足資料：windowResizedとfullScreen", 34)
 ]
 
 # PDFを開く

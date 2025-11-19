@@ -28,7 +28,19 @@ footer: パーティクルとインタラクション
   - 生成されては消えていくパーティクルの設計
 - 応用：マウスを使ったインタラクション
   - `mouseX`, `mouseY` で位置に応じた描画
-  - `dist()` を使ったサイズ・色の変化  
+  - `mouseIsPressed`を使ってクリックを検出
+  - `dist()` を使って動きを検出
+
+---
+
+
+## [パーティクルシステム](https://editor.p5js.org/takano_ma/sketches/kplV6yBAz) （←サンプルプログラム）
+
+- **自律的に動くドット**を生成するする表現
+- **ジェネラティブ・アート**やWebサイトでよく使われる表現
+  - (サンプルではノードが描かれているが、今回は扱わない)
+
+<img src="./img/第一回/particle_system.png"  width="900" class="center-img">
 
 ---
 
@@ -58,7 +70,7 @@ footer: パーティクルとインタラクション
 
 ---
 
-# パーティクルクラスの初期設定
+## パーティクルクラスの初期設定
 
 - `constructor()`を用意して初期設定の準備
 - インスタンスを作成時に受け取った引数を、初期値としてプロパティに保存
@@ -284,11 +296,11 @@ function draw() {
 
 ---
 
-# 応用：マウスに反応するパーティクル
+# 応用：マウスの位置を使ったパーティクル生成
 
 ---
 
-## [マウス位置からパーティクルを出す](https://editor.p5js.org/takano_ma/sketches/nBo9cSMmE)
+## [マウス位置からパーティクルを生成](https://editor.p5js.org/takano_ma/sketches/nBo9cSMmE)
 
 - `mouseX`,`mouseY`で、常に更新されるマウスの位置を取得できる
   - 新しいインスタンスを作る際、その位置を初期値として利用する
@@ -350,12 +362,25 @@ function draw() {
 
 ---
 
-# アレンジしてみる
+# 演習：パーティクル表現をアレンジしてみる
+
+---
+
+## パーティクルクラスや描画をアレンジしてみる
+- ①クラス自体を変更してアレンジしてみる
+  - クラスの初期設定で、速度や大きさなどを変えてみる
+  - 新たな変数（色や形状など）を入れてみる
+  - 描画の際の図形を変えてみる
+- ②前回やった「色」を使った表現を応用してみる
+  - 背景色を変えたり、生成するオブジェクトの色パターンをそろえるなど
+  - グラデーションやHSBを使った表現など
+- +③テキストを使ったパーティクル生成
+  - 文字列を用意して、テキストをパーティクルとして生成してみる
+
 
 ---
 
 ## アレンジ例：パーティクルの動きを調整する
-
 
 - パーティクルの初期設定で、運動の方向を変えてみる
 
@@ -378,12 +403,14 @@ function draw() {
   - `display()`メソッド内で色の指定部分に反映
   - `fill(this.hue, 80, 100, this.lifespan);`
 
+![bg right:25%](./img/第三回/particle_colorful.png)
+
 ---
 
 ## アレンジ例：[色んな図形を生成](https://editor.p5js.org/takano_ma/sketches/0zv0b926K)
 
 - `display()`内部で描画する図形の種類を変える
-- `this.shapeType = int(random(3))`で図形を初期設定する
+- `this.shapeType = int(random(3))`で図形を初期設定
 
 ```javascript
     if (this.shapeType === 0) {
@@ -400,6 +427,8 @@ function draw() {
     }
 ```
 
+![bg right:25%](./img/第三回/particle_shapes.png)
+
 ---
 
 ## アレンジ例：[ランダムな文字列を表示](https://editor.p5js.org/takano_ma/sketches/sfWgMTILK)
@@ -411,12 +440,17 @@ function draw() {
 - `display()`でテキストを描画
   - `text(this.text, this.x, this.y); `
 
+![bg right:25%](./img/第三回/text_particle.png)
+
 ---
 
 
 ## アレンジ例：[ランダムな文字列を表示+グラデーション背景](https://editor.p5js.org/takano_ma/sketches/b5reEwCqb)
 
 - 前回の授業のグラデーションを背景として利用
+
+
+<img src="./img/第三回/text_gradient.png"  width="900" class="center-img">
 
 ---
 
