@@ -187,7 +187,7 @@ function draw() {
 2. クラスの初期設定：`constructor()` で初期位置や速度、寿命を設定
 3. `update()` で毎フレーム位置や寿命を更新
 4. `display()` で描画
-5. `draw()`無いで `particles[]`にインスタンスを毎フレーム追加 (**new**)
+5. `draw()`内で `particles[]`にインスタンスを毎フレーム追加 (**new**)
 6. `lifespan`が0になった要素を配列から削除する(**new**)
 
 ---
