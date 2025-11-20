@@ -495,8 +495,8 @@ function windowResized(){
 ```javascript
 function keyPressed(){
   if(key == "f"){
-    let fs = fullscreen();
-    fullscreen(!fs);
+    let fs = fullscreen(); // ←現在のFS状態を取得（true or false）
+    fullscreen(!fs); // ←現在の状態の反対をセット
   }
 }
 ```

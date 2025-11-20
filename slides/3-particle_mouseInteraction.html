@@ -603,8 +603,8 @@
 </ul>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">keyPressed</span>(<span class="hljs-params"></span>){
   <span class="hljs-keyword">if</span>(key == <span class="hljs-string">&quot;f&quot;</span>){
-    <span class="hljs-keyword">let</span> fs = <span class="hljs-title function_">fullscreen</span>();
-    <span class="hljs-title function_">fullscreen</span>(!fs);
+    <span class="hljs-keyword">let</span> fs = <span class="hljs-title function_">fullscreen</span>(); <span class="hljs-comment">// ←現在のFS状態を取得（true or false）</span>
+    <span class="hljs-title function_">fullscreen</span>(!fs); <span class="hljs-comment">// ←現在の状態の反対をセット</span>
   }
 }
 </code></pre>
