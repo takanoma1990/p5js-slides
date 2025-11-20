@@ -445,12 +445,13 @@ function draw() {
 ---
 
 
-## アレンジ例：[ランダムな文字列を表示+グラデーション背景](https://editor.p5js.org/takano_ma/sketches/b5reEwCqb)
-
+## アレンジ例：ランダムな文字列を表示+グラデーション背景
 - 前回の授業のグラデーションを背景として利用
+  - [マウスクリック時に生成するプログラム](https://editor.p5js.org/takano_ma/sketches/b5reEwCqb)
+  - [自動的に生成するプログラム](https://editor.p5js.org/takano_ma/sketches/JTgMWjqy8)
 
 
-<img src="./img/第三回/text_gradient.png"  width="900" class="center-img">
+<img src="./img/第三回/text_gradient.png"  width="750" class="center-img">
 
 ---
 
