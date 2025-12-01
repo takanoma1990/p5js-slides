@@ -197,197 +197,6 @@ function draw() {
 
 ---
 
-# 応用:音に反応して波紋を描画する
-
----
-
-# マイク入力で波紋を生成する
-## ([サンプルコード](https://editor.p5js.org/takano_ma/sketches/LL8O2Z1nV))
-
----
-
-## 波紋を表すクラス（Ripple）の作成
-
-- 「波紋」＝  
-  - 中心位置（x, y）
-  - 大きさ（e_size）
-  - 透過度（lifespan）を持つクラス
-- `update()` で  
-  - 波紋を少しずつ大きくする
-  - 透過度を少しずつ下げる
-- `display()` で  
-  - 枠線だけの円を描画
-
-```javascript
-class Ripple {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    this.e_size = 1;
-    this.lifespan = 255;
-  }
-
-  update() {
-    this.e_size += 5;   // 円の大きさを広げる
-    this.lifespan -= 2; // だんだん薄くする
-  }
-
-  display() {
-    noFill();
-    strokeWeight(2);
-    stroke(255, this.lifespan);
-    ellipse(this.x, this.y, this.e_size);
-  }
-
-  isDead() {
-    return this.lifespan <= 0;
-  }
-}
-```
-
----
-
-## マイク入力で波紋を生成する
-
-- `mic = new p5.AudioIn();` でマイク入力を用意
-- `mic.getLevel()` で **現在の音量（0〜1）** を取得
-- `lerp()` で音量をスムージングして急な変化を抑える
-- スムージング後の値が `threshold` を超えたら  
-  波紋クラスを生成して配列に追加
-
-```javascript
-let mic;
-let ripples = [];
-
-let smoothed = 0;          // スムージング用
-let smoothing_ratio = 0.2; // 小さいほどゆっくり変化
-let threshold = 0.04;      // この音量を超えたら生成
-
-function setup() {
-  createCanvas(windowWidth, windowHeight);
-  mic = new p5.AudioIn();
-  mic.start(); // クリックで有効化が必要な場合あり
-}
-
-function draw() {
-  background(0);
-
-  // マイク音量を取得
-  let level = mic.getLevel();
-
-  // スムージング（急に跳ねすぎるのを防ぐ）
-  smoothed = lerp(smoothed, level, smoothing_ratio);
-
-  // 一定以上の音がきたら波紋を追加
-  if (smoothed > threshold) {
-    ripples.push(new Ripple(width / 2, height / 2));
-  }
-
-  // 波紋の更新＆描画
-  for (let p of ripples) {
-    p.update();
-    p.display();
-  }
-
-  // 寿命が尽きた波紋を削除
-  for (let i = ripples.length - 1; i >= 0; i--) {
-    if (ripples[i].isDead()) {
-      ripples.splice(i, 1);
-    }
-  }
-}
-```
-
----
-
-## 矢印キーでしきい値 threshold を調整する
-
-- 波紋が「出すぎる / 出なさすぎる」問題を  
-  **矢印キーでリアルタイム調整**できるようにする
-- `ArrowUp` キー：threshold を **増やす** → 大きい音でだけ反応
-- `ArrowDown` キー：threshold を **減らす** → 小さい音でも反応
-- `console.log(threshold);` で現在値を確認
-
-```javascript
-function keyPressed(){
-  if (key == "f") {
-    let fs = fullscreen();
-    fullscreen(!fs);
-  }
-
-  // 上キーでしきい値アップ
-  if (key == "ArrowUp") {
-    threshold += 0.001;
-    if (threshold > 0.5) {
-      threshold = 0.5;
-    }
-    console.log(threshold);
-  }
-
-  // 下キーでしきい値ダウン
-  if (key == "ArrowDown") {
-    threshold -= 0.001;
-    if (threshold < 0.01) {
-      threshold = 0.01;
-    }
-    console.log(threshold);
-  }
-}
-```
-
-
----
-
-# 応用：マイク音量に反応してパーティクルを生成する
-## ([サンプルコード](https://editor.p5js.org/takano_ma/sketches/EHtn1B1mf))
-
-
-- パーティクルクラスをマイク入力のコードに反映
-- 生成のタイミングを音量によって操作する
-
-
----
-
-## マイク音量を取得してしきい値で判定
-
-- `mic.getLevel()`：マイク入力の音量（0〜1）を取得
--  閾値の変数(`threshold`) を用意して、超えたらパーティクルを生成
-
-```javascript
-//コードの初期変数の設定
-let mic;
-let particles = [];
-
-let smoothed = 0;
-let smoothing_ratio = 0.2;
-let threshold = 0.04; // 閾値の変数を準備
-```
-
----
-
-## draw() で音量に応じてパーティクルを追加
-
-- 音量がthresholdを超えた際に、particlesの新しいインスタンスを作る
-
-```javascript
-  // 音量を取得
-  let level = mic.getLevel();
-  console.log(level); // threshold の調整に便利
-
-  // スムージング
-  smoothed = lerp(smoothed, level, smoothing_ratio);
-
-  // 一定以上ならパーティクル生成
-  if (smoothed > threshold) {
-    let x = random(width);
-    let y = random(height);
-    particles.push(new Particle(x, y));
-  }
-  //以下省略
-```
-
----
-
 # FFTによる周波数帯域の成分を使った描画
 
 ---
@@ -486,9 +295,335 @@ function draw() {
   smoothingMid    = lerp(smoothingMid,    mid,    smoothing_ratio);
   smoothingTreble = lerp(smoothingTreble, treble, smoothing_ratio);
 ```
+
+
 ---
 
-# FFTによるスペクトル・アナライザー
+
+
+# 応用：マイク入力で波紋を生成する
+## ([サンプルコード](https://editor.p5js.org/takano_ma/sketches/LL8O2Z1nV))
+
+---
+
+## 波紋を表すクラス（Ripple）の作成
+
+- 「波紋」＝  
+  - 中心位置（x, y）
+  - 大きさ（e_size）
+  - 透過度（lifespan）を持つクラス
+- `update()` で  
+  - 波紋を少しずつ大きくする
+  - 透過度を少しずつ下げる
+- `display()` で  
+  - 枠線だけの円を描画
+
+---
+
+```javascript
+class Ripple {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.e_size = 1;
+    this.lifespan = 255;
+  }
+
+  update() {
+    this.e_size += 5;   // 円の大きさを広げる
+    this.lifespan -= 2; // だんだん薄くする
+  }
+
+  display() {
+    noFill();
+    strokeWeight(2);
+    stroke(255, this.lifespan);
+    ellipse(this.x, this.y, this.e_size);
+  }
+
+  isDead() {
+    return this.lifespan <= 0;
+  }
+}
+```
+
+---
+
+## マイク入力で波紋を生成する
+
+- `mic = new p5.AudioIn();` でマイク入力を用意
+- `mic.getLevel()` で **現在の音量（0〜1）** を取得
+- `lerp()` で音量をスムージングして急な変化を抑える
+- スムージング後の値が `threshold` を超えたら  
+  波紋クラスを生成して配列に追加
+
+---
+
+```javascript
+let mic;
+let ripples = [];
+
+let smoothed = 0;          // スムージング用
+let smoothing_ratio = 0.2; // 小さいほどゆっくり変化
+let threshold = 0.04;      // この音量を超えたら生成
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  mic = new p5.AudioIn();
+  mic.start(); // クリックで有効化が必要な場合あり
+}
+
+function draw() {
+  background(0);
+
+  // マイク音量を取得
+  let level = mic.getLevel();
+
+  // スムージング（急に跳ねすぎるのを防ぐ）
+  smoothed = lerp(smoothed, level, smoothing_ratio);
+
+  // 一定以上の音がきたら波紋を追加
+  if (smoothed > threshold) {
+    ripples.push(new Ripple(width / 2, height / 2));
+  }
+
+  // 波紋の更新＆描画
+  for (let p of ripples) {
+    p.update();
+    p.display();
+  }
+
+  // 寿命が尽きた波紋を削除
+  for (let i = ripples.length - 1; i >= 0; i--) {
+    if (ripples[i].isDead()) {
+      ripples.splice(i, 1);
+    }
+  }
+}
+```
+
+---
+
+## 矢印キーでしきい値 threshold を調整する
+
+- 波紋が「出すぎる / 出なさすぎる」問題を  
+  **矢印キーでリアルタイム調整**できるようにする
+- `ArrowUp` キー：threshold を **増やす** → 大きい音でだけ反応
+- `ArrowDown` キー：threshold を **減らす** → 小さい音でも反応
+- `console.log(threshold);` で現在値を確認
+
+```javascript
+function keyPressed(){
+  if (key == "f") {
+    let fs = fullscreen();
+    fullscreen(!fs);
+  }
+
+  // 上キーでしきい値アップ
+  if (key == "ArrowUp") {
+    threshold += 0.001;
+    if (threshold > 0.5) {
+      threshold = 0.5;
+    }
+    console.log(threshold);
+  }
+
+  // 下キーでしきい値ダウン
+  if (key == "ArrowDown") {
+    threshold -= 0.001;
+    if (threshold < 0.01) {
+      threshold = 0.01;
+    }
+    console.log(threshold);
+  }
+}
+```
+
+---
+
+# 応用：帯域ごとの波紋を出す
+##([サンプルコード](https://editor.p5js.org/takano_ma/sketches/66QiN3n9Q))
+
+---
+
+- FFTで **低音 / 中音 / 高音** のエネルギーを取得
+- 帯域ごとに値を**スムージング & 正規化**
+- 各帯域にそれぞれ **しきい値（threshold）** を設定
+- しきい値を超えた帯域ごとに  
+  **位置と色の違う波紋（Ripple）** を生成する
+
+---
+
+## 変数の準備（帯域ごとのスムージングとしきい値）
+
+- `smoothingBass / Mid / Treble`：帯域ごとのスムージング用
+- `thresholdBass / Mid / Treble`：帯域ごとのしきい値（0〜1）
+- `ripples`：生成された波紋を入れておく配列
+
+```javascript
+let mic;
+let fft;
+let ripples = [];
+
+// 帯域ごとのスムージング用
+let smoothingBass = 0;
+let smoothingMid = 0;
+let smoothingTreble = 0;
+let smoothing_ratio = 0.2;
+
+// 帯域別の threshold（0〜1）
+let thresholdBass = 0.725;
+let thresholdMid = 0.4;
+let thresholdTreble = 0.2;
+```
+
+---
+
+## setup：マイク入力とFFTの準備
+
+```javascript
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  background(0);
+
+  mic = new p5.AudioIn();
+  mic.start(); // クリックで有効化が必要な場合あり
+
+  fft = new p5.FFT();   // FFTの準備
+  fft.setInput(mic);    // マイク入力を解析対象にする
+}
+```
+
+---
+
+## 帯域ごとのスムージングと正規化
+
+- `fft.getEnergy("bass")` などで帯域別の値（0〜255）を取得し，`lerp()`で補完
+
+```javascript
+  let bass   = fft.getEnergy("bass");
+  let mid    = fft.getEnergy("mid");
+  let treble = fft.getEnergy("treble");
+
+  // スムージング
+  smoothingBass   = lerp(smoothingBass,   bass,   smoothing_ratio);
+  smoothingMid    = lerp(smoothingMid,    mid,    smoothing_ratio);
+  smoothingTreble = lerp(smoothingTreble, treble, smoothing_ratio);
+
+  // 0〜255 → 0〜1 に正規化
+  let bassNorm   = smoothingBass   / 255;
+  let midNorm    = smoothingMid    / 255;
+  let trebleNorm = smoothingTreble / 255;
+```
+
+---
+
+## 帯域ごとの閾値を超えたかの判定
+
+- 各帯域ごとに `bassNorm > thresholdBass` などで判定
+- しきい値を超えた帯域に応じて  
+  **波紋を出す位置を変える**
+
+```javascript
+  // 各帯域の threshold 判定
+  if (bassNorm > thresholdBass) {
+    ripples.push(new Ripple(width / 2, height / 2, "bass"));
+  }
+
+  if (midNorm > thresholdMid) {
+    ripples.push(new Ripple(width / 4,         height / 2, "mid"));
+    ripples.push(new Ripple(width - width / 4, height / 2, "mid"));
+  }
+
+  if (trebleNorm > thresholdTreble) {
+    ripples.push(new Ripple(width / 10,          height / 2, "treble"));
+    ripples.push(new Ripple(width - width / 10,  height / 2, "treble"));
+  }
+
+  // 波紋の更新＆描画
+  for (let r of ripples) {
+    r.update();
+    r.display();
+  }
+```
+
+---
+
+## 引数に type を入れて色分けする Ripple クラス
+
+- `constructor`に第三引数の`type`を追加
+- `type` に `"bass" / "mid" / "treble"` を渡して，`display()`で色を分ける
+
+```javascript
+  constructor(x, y, type) {
+    this.type = type;"treble"
+  }
+  display(){
+    if (this.type === "bass") {
+      stroke(0, 150, 255, this.lifespan);
+    } else if (this.type === "mid") {
+      stroke(0, 255, 150, this.lifespan);
+    } else if (this.type === "treble") {
+      stroke(255, 200, 0, this.lifespan);
+    }
+  }
+```
+
+---
+
+
+# 応用：マイク音量に反応してパーティクルを生成する
+## ([サンプルコード](https://editor.p5js.org/takano_ma/sketches/EHtn1B1mf))
+
+
+- パーティクルクラスをマイク入力のコードに反映
+- 生成のタイミングを音量によって操作する
+
+
+---
+
+## マイク音量を取得してしきい値で判定
+
+- `mic.getLevel()`：マイク入力の音量（0〜1）を取得
+-  閾値の変数(`threshold`) を用意して、超えたらパーティクルを生成
+
+```javascript
+//コードの初期変数の設定
+let mic;
+let particles = [];
+
+let smoothed = 0;
+let smoothing_ratio = 0.2;
+let threshold = 0.04; // 閾値の変数を準備
+```
+
+---
+
+## draw() で音量に応じてパーティクルを追加
+
+- 音量がthresholdを超えた際に、particlesの新しいインスタンスを作る
+
+```javascript
+  // 音量を取得
+  let level = mic.getLevel();
+  console.log(level); // threshold の調整に便利
+
+  // スムージング
+  smoothed = lerp(smoothed, level, smoothing_ratio);
+
+  // 一定以上ならパーティクル生成
+  if (smoothed > threshold) {
+    let x = random(width);
+    let y = random(height);
+    particles.push(new Particle(x, y));
+  }
+  //以下省略
+```
+
+
+---
+
+# (来週用)FFTによるスペクトル・アナライザー
 
 ---
 
@@ -574,5 +709,3 @@ function draw(){
   }
 }
 ```
-
----
