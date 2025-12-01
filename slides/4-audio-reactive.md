@@ -296,6 +296,88 @@ function draw() {
   smoothingTreble = lerp(smoothingTreble, treble, smoothing_ratio);
 ```
 
+---
+
+# 応用：音でパーティクルの大きさや速度を変える
+##([サンプルコード]())
+
+---
+
+## 音でパーティクルを制御する考え方
+
+- mic.getLevel() で「音量（0〜1）」を取得できる  
+- 音量は揺れが激しいため **lerp() でスムージング**  
+- スムージング後の値を **パーティクルのサイズ・速度の倍率に変換**  
+- パーティクルの基本構造は前回扱ったため、今回は「音との連動」に注目
+
+---
+
+## 音量をスムージングして倍率に変換する
+
+```javascript
+let smoothed = 0;          // スムージング後の音量
+let smoothing_ratio = 0.1; // 小さいほどゆっくり変化
+let levelMax = 0.1;        // 想定する最大音量（環境に応じて調整）
+
+function draw() {
+  let level = mic.getLevel();           // その瞬間の音量
+  smoothed = lerp(smoothed, level, smoothing_ratio);
+
+  // 音量→大きさの倍率に変換
+  let sizeScale = map(smoothed, 0, levelMax, 1, 10.0, true);
+
+  // 音量→速度の倍率に変換
+  let speedScale = map(smoothed, 0, levelMax, 0.1, 5.0, true);
+}
+```
+
+---
+
+## パーティクルに倍率を渡して反映させる
+
+- update(scale) で **速度に倍率をかける**
+- display(scale) で **大きさに倍率をかける**
+- 音が大きいほど速く・大きく動く表現が可能
+
+```javascript
+for (let p of particles) {
+  p.update(speedScale);   // ← 音量で速さを変える
+  p.display(sizeScale);   // ← 音量で大きさを変える
+}
+```
+
+---
+
+## パーティクルクラス：サイズと速度に scale を反映
+
+```javascript
+class Particle {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.col = random(0, 360);
+    this.vx = random(-0.5, 0.5);
+    this.vy = random(-0.5, 0.5);
+    this.baseSize = random(5, 20); // 基本サイズ
+  }
+
+  update(scale) {
+    this.x += this.vx * scale;  // 音量倍率で速度UP
+    this.y += this.vy * scale;
+
+    // 端で跳ね返る
+    if (this.x < 0 || this.x > width) this.vx *= -1;
+    if (this.y < 0 || this.y > height) this.vy *= -1;
+  }
+
+  display(scale) {
+    noStroke();
+    fill(this.col, 80, 100, 50);
+    let s = this.baseSize * scale; // 音量でサイズUP
+    ellipse(this.x, this.y, s, s);
+  }
+}
+```
 
 ---
 
