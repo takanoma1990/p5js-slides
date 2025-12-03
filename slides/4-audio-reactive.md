@@ -16,21 +16,28 @@ footer: 音の入力と可視化表現
 </style>
 
 # 第4回　クリエイティブ・コーディング入門
-## 音の可視化①（FFTを使った可視化）
+## 音の可視化①（振幅を使った可視化）
 
 ---
 
+## オーディオリアクティブな表現
 
+- リアルタイムで音に反応する視覚表現のこと
+- 音の変化を視覚化することで、リアルタイムな変化を強調する
+- 様々なビジュアル・プログラミング・ツールで
+- 参考事例
+  - [Sumberser - audio reactive Quartz Composer](https://www.youtube.com/watch?v=NVTiI9Zye_o)
+  - [TouchDesigner AudioVisual](https://www.youtube.com/watch?v=w5RhMsfN6lU)
+
+---
 
 # 全体の流れ
 
-- マイク入力で可視化
-  - 音量 → 円の大きさ
-  - FFT → 線グラフ
-  - FFT → バー表示
-  - FFT → 円の並び
-  - FFT → 色付きの円
-
+- p5.soundライブラリを使った音の利用
+- マイク入力からの音量を使った制御
+- 音量のlerp関数を使ったスムージング
+- 音源ファイルの利用
+- 応用：パーティクル・クラスをオーディオ・リアクティブにアレンジ
 
 ---
 
@@ -57,54 +64,16 @@ footer: 音の入力と可視化表現
 
 ---
 
+## 今回の内容：音量を使った描画
 
-# 利用できる主なクラス
-
-- **p5.AudioIn**  
-  マイク入力を取得する
-- **p5.Amplitude**  
-  全体の音量レベルを取得
-- **p5.FFT**  
-  音を周波数ごとに分析する
-- **loadSound / p5.SoundFile**  
-  音声ファイルの読み込み・再生
-
----
-
-## 利用例：マイク入力
-
-- setup()での設定
-  - `mic = new p5.AudioIn();` でマイクを作成
-  - `userStartAudio(); mic.start();` で入力開始
-
-- draw()での利用
-  - `level = mic.getLevel();` で音量(0〜1)を取得
-  - 図形の大きさ・色などに反映させて可視化
-
----
-
-## 利用例：FFT
-
-- setup()での設定
-  - `mic = new p5.AudioIn(); mic.start();`
-  - `fft = new p5.FFT(); fft.setInput(mic);` で解析対象に設定
-
-- draw()での利用
-  - `spectrum = fft.analyze();` で周波数分布を取得
-  - `wave = fft.waveform();` で波形データ取得・描画に利用
-
----
-
-## 利用例：音源の読み込み・再生
-
-- setup()での設定
-  - `sound = loadSound("music.mp3");` で音声ファイルを読み込む
-  - `sound.play();` や `sound.loop();` で再生を開始
-
-- draw()での利用
-  - `sound.isPlaying()` を使って状態を確認
-  - 再生中は図形を動かす・反応させるなどの演出が可能
-
+- 入力音のレベル値を使って描画を制御する
+- 主に二つの利用方法がある
+  ①：音量を使って大きさや色のパラメータを制御
+    - ellipseやrectの大きさと色を変える
+    - 動いているオブジェクトの大きさを制御する
+  ②：閾値を設定して生成のトリガーにする
+    - パーティクルやオブジェクトの生成に音量を利用する
+- 今回は①の方を扱う
 ---
 
 
@@ -149,19 +118,45 @@ function draw() {
 
 ---
 
-## lerp()で音量の変化を滑らかに
 
-- `getLevel()` の値をそのまま使うと変化が激しくなってしまう
-- lerp関数を使って変化を滑らかにしてあげる
-- `lerp(a, b, t)`：a から b へ t の割合だけ近づける（0〜1）
-- 前フレームの値用に `smoothLevel` を用意しておく
-- `smoothLevel = lerp(smoothLevel, level, 0.1);`
-- 得られた `smoothLevel` を `map()` で円の直径に変換
-- t を小さく→ゆっくり滑らか，大きく→すばやく追従
+# 背景の透明度を下げて残像を残しておく（[サンプルコード](https://editor.p5js.org/takano_ma/sketches/jphz_RyWa)）
+
+- 音量は変化が激しいため、そのままだと描画の変化も激しい
+- 背景の透明度を低くすると前フレームの残像が残るので少し滑らかに見える
+
+```javascript
+function draw() {
+  background(0, 5);//透明度を下げて残像が残るように
+  let level = mic.getLevel();
+  // 音量を円の直径にマッピング
+  let diameter = map(level, 0, 0.1, 0, width);
+  noStroke();
+  fill(0, 127, 255, 200);
+  ellipse(width / 2, height / 2, diameter);
+}
+```
+
 
 ---
 
-## lerp() を使ったコードパターン
+# lerpを使った音量のスムージング
+## （[サンプルコード](https://editor.p5js.org/takano_ma/sketches/rZLqwuBFj)）
+
+---
+
+## lerp()で音量の変化を滑らかに
+
+- `getLevel()` の値をそのまま使うと変化が激しくなってしまう
+- lerp関数を使って変化を滑らかにする
+  - `lerp(a, b, t)`：a から b へ t の割合だけ近づける（0〜1）
+- 前フレームの値用に `smoothLevel` を用意しておく
+- `smoothLevel = lerp(smoothLevel, level, 0.1);`
+- 得られた `smoothLevel` を `map()` で円の直径に変換
+
+
+---
+
+## lerp() を使ったコード
 
 - 事前に `let smoothLevel = 0;` を宣言しておく
 - draw() の中で：
@@ -173,7 +168,7 @@ function draw() {
 
 ---
 
-## スムージングを用いたコード（[サンプルコード](https://editor.p5js.org/takano_ma/sketches/rZLqwuBFj)）
+## スムージングを用いたコード
 
 ```javascript
 let mic;
@@ -197,109 +192,109 @@ function draw() {
 
 ---
 
-# FFTによる周波数帯域の成分を使った描画
+# 音源ファイルの利用
+## ([サンプルコード](https://editor.p5js.org/takano_ma/sketches/jPGdIBqct))
 
 ---
 
-## FFTで帯域ごとに可視化([サンプルコード](https://editor.p5js.org/takano_ma/sketches/Dr9Fm-jkA))
+## 音源ファイルのアップロード方法（p5.js Web Editor）
 
-- FFT（Fast Fourier Transform）
-  - 周波数ごと成分に分離する方法
-- p5.FFT クラス
-  - `fft = new p5.FFT();`でfftのインスタンスを作成
-  - `fft.setInput(mic);` でマイク入力を解析対象にする
+- Web Editor では、**mp3 / wav などの音源ファイルをプロジェクトに追加**できる  
+- 手順：
+  1. エディタ左側の **「▶ Files」** を開く  
+  2. **「Upload File」** をクリックしてファイル選択 or ファイルをドラッグで追加
+
+<img src="./img/第四回/ファイルのアップロードの仕方.png"  width="800" class="center-img">
 
 ---
 
-## p5.FFT の初期設定（setup内）
+## 音源ファイルの読み込み
+
+- 事前に `preload()` 関数で音源ファイルを読み込む必要がある
+- `preload()`内で`loadSound("ファイル名")` を使ってファイルを読み込み
 
 ```javascript
-let mic;
-let fft;
+let soundFile;
 
-function setup() {
-  createCanvas(800, 400);
-  textAlign(CENTER, CENTER);
-  // マイク入力の開始
-  mic = new p5.AudioIn();
-  mic.start();
-  // FFT（周波数解析）の準備
-  fft = new p5.FFT();
-  fft.setInput(mic);
+function preload() {
+  // 同じフォルダに .mp3 を置く
+  soundFile = loadSound('input.mp3');
 }
 ```
 
 ---
 
-## 帯域ごとの成分を分けて抽出する
+## p5.Amplitude を使った入力音の取得
 
-- `fft.analyze()` で周波数ごとのエネルギーを計算
-- `getEnergy("bass" / "mid" / "treble")` で各帯域の値を取得
-- `map()` で値（0〜255）を円の直径に変換
+- `p5.Amplitude`：音源の**全体の音量レベル**を取得するクラス
+- `amp = new p5.Amplitude();` でインスタンス作成
+- `amp.setInput(soundFile);` で対象の音源ファイルを指定
+
+```javascript
+let soundFile;
+let amp;
+
+function setup() {
+  createCanvas(800, 800);
+
+  amp = new p5.Amplitude();   // 音量解析用
+  amp.setInput(soundFile);    // 読み込んだ音源を解析対象にする
+}
+```
+
+---
+
+## 再生に関する注意（クリックで再生・一時停止）
+
+- ブラウザの仕様で「ユーザー操作なしで音を鳴らせない」ようになっている
+- `getAudioContext().resume()` を **クリック時に呼ぶ**と安全
+- 再生と一時停止は `soundFile.play()` / `soundFile.pause()` を切り替える
+
+```javascript
+function mousePressed() {
+  // ブラウザのオーディオ制限対策
+  if (getAudioContext().state !== 'running') {
+    getAudioContext().resume();
+  }
+  // 再生／一時停止をトグル
+  if (soundFile.isPlaying()) {
+    soundFile.pause();
+  } else {
+    soundFile.play();
+  }
+}
+```
+
+---
+
+## draw内での音量取得と可視化
+
+- マイクの時とほとんど同じように`getLevel()`で0~1の音量レベルを取得
+- lerpで変化を滑らかにして、mapで円の大きさの値に変換
 
 ```javascript
 function draw() {
   background(0);
-
-  // 周波数ごとのエネルギーを解析
-  fft.analyze();
-
-  // 帯域ごとの音量（エネルギー）を取得（0〜255）
-  let bass   = fft.getEnergy("bass");   // 低音
-  let mid    = fft.getEnergy("mid");    // 中音
-  let treble = fft.getEnergy("treble"); // 高音
-  //次のページへ
-```
-
----
-
-## 帯域ごとの値を分けて図形のサイズを変える
-
-```javascript
-  // 円の直径にマッピング
-  let bass_Diameter   = map(bass,   0, 255, 0, 200);
-  let mid_Diameter    = map(mid,    0, 255, 0, 200);
-  let treble_Diameter = map(treble, 0, 255, 0, 200);
-
-  noStroke();
-
-  fill(0, 150, 255, 200);
-  ellipse(width * 1/4, height / 2, bass_Diameter);
-
-  fill(0, 255, 150, 200);
-  ellipse(width * 2/4, height / 2, mid_Diameter);
-
-  fill(255, 200, 0, 200);
-  ellipse(width * 3/4, height / 2, treble_Diameter);
+  // 現在の音量（0〜1くらい）
+  let level = amp.getLevel();
+  // スムージング（急に変化しないようになめらかに）
+  let smoothed = lerp(pre_volume, level, 0.3);
+  pre_volume = smoothed;
+  // 音量に応じて円の大きさを変える
+  let r = map(smoothed, 0, 0.3, 10, 1000, true);
+  noFill();
+  stroke(255);
+  ellipse(width / 2, height / 2, r, r);
 }
 ```
 
----
-
-## 帯域ごとに値をスムージング([サンプルコード](https://editor.p5js.org/takano_ma/sketches/nsJ18D6Fr))
-
-```javascript
-let smoothingBass = 0;
-let smoothingMid = 0;
-let smoothingTreble = 0;
-let smoothing_ratio = 0.2; //lerpの補間係数を用意（小さいほどゆっくり変化）
-
-function draw() {
-  …
-  let bass   = fft.getEnergy("bass");
-  let mid    = fft.getEnergy("mid");
-  let treble = fft.getEnergy("treble");
-
-  // 帯域ごとに滑らかにする
-  smoothingBass   = lerp(smoothingBass,   bass,   smoothing_ratio);
-  smoothingMid    = lerp(smoothingMid,    mid,    smoothing_ratio);
-  smoothingTreble = lerp(smoothingTreble, treble, smoothing_ratio);
-```
 
 ---
+
 
 # 応用：音でパーティクルの大きさや速度を変える
-##([サンプルコード]())
+## ([サンプルコード：マイク](https://editor.p5js.org/takano_ma/sketches/TkqIoAI6U))
+## ([サンプルコード：音源ファイル](https://editor.p5js.org/takano_ma/sketches/gnxIzzbOA))
 
 ---
 
@@ -353,27 +348,23 @@ for (let p of particles) {
 ```javascript
 class Particle {
   constructor(x, y) {
-    this.x = x;
-    this.y = y;
+    this.x = x; this.y = y;
     this.col = random(0, 360);
-    this.vx = random(-0.5, 0.5);
-    this.vy = random(-0.5, 0.5);
+    this.vx = random(-0.5, 0.5); this.vy = random(-0.5, 0.5);
     this.baseSize = random(5, 20); // 基本サイズ
   }
-
   update(scale) {
-    this.x += this.vx * scale;  // 音量倍率で速度UP
+    this.x += this.vx * scale;  // 音量を速度にかける
     this.y += this.vy * scale;
 
     // 端で跳ね返る
     if (this.x < 0 || this.x > width) this.vx *= -1;
     if (this.y < 0 || this.y > height) this.vy *= -1;
   }
-
   display(scale) {
     noStroke();
     fill(this.col, 80, 100, 50);
-    let s = this.baseSize * scale; // 音量でサイズUP
+    let s = this.baseSize * scale; // 音量でサイズを変える
     ellipse(this.x, this.y, s, s);
   }
 }
@@ -381,413 +372,43 @@ class Particle {
 
 ---
 
+## アレンジ：移動する方向を限定する
 
-
-# 応用：マイク入力で波紋を生成する
-## ([サンプルコード](https://editor.p5js.org/takano_ma/sketches/LL8O2Z1nV))
-
----
-
-## 波紋を表すクラス（Ripple）の作成
-
-- 「波紋」＝  
-  - 中心位置（x, y）
-  - 大きさ（e_size）
-  - 透過度（lifespan）を持つクラス
-- `update()` で  
-  - 波紋を少しずつ大きくする
-  - 透過度を少しずつ下げる
-- `display()` で  
-  - 枠線だけの円を描画
-
----
+- パーティクルごとに縦か横のどちらかの移動に限定する
+- 初期設定で移動軸を決める変数を用意
+  - [マイクのコード](https://editor.p5js.org/takano_ma/sketches/fGRciqTxC)
+  - [音源のコード](https://editor.p5js.org/takano_ma/sketches/B_rNYBOwh)
 
 ```javascript
-class Ripple {
   constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    this.e_size = 1;
-    this.lifespan = 255;
-  }
+    //...
+    this.v = random(-0.5, 0.5);
+    this.direction = int(random(2)); //移動する軸を決める
+    //...
 
-  update() {
-    this.e_size += 5;   // 円の大きさを広げる
-    this.lifespan -= 2; // だんだん薄くする
-  }
-
-  display() {
-    noFill();
-    strokeWeight(2);
-    stroke(255, this.lifespan);
-    ellipse(this.x, this.y, this.e_size);
-  }
-
-  isDead() {
-    return this.lifespan <= 0;
-  }
-}
+  update(scale){
+    if(this.direction == 0) this.x += this.v*scale; //x軸での移動
+    if(this.direction == 1) this.y += this.v*scale; //y軸での移動
+    //...
 ```
 
 ---
 
-## マイク入力で波紋を生成する
+## アレンジ：パーティクルと円を組み合わせる([音源のコード](https://editor.p5js.org/takano_ma/sketches/PnQP4z4il))
+- 大きく変化する一個の図形をメインの要素にする
 
-- `mic = new p5.AudioIn();` でマイク入力を用意
-- `mic.getLevel()` で **現在の音量（0〜1）** を取得
-- `lerp()` で音量をスムージングして急な変化を抑える
-- スムージング後の値が `threshold` を超えたら  
-  波紋クラスを生成して配列に追加
+
+<img src="./img/第四回/パーティクルと円の組み合わせ.png" width="700" class = "center-img">
 
 ---
 
-```javascript
-let mic;
-let ripples = [];
+## 本日のまとめ
+- p5.sound による音入力と音量取得の基礎
+- マイク入力と音源ファイルの利用方法
+- 音量データを用いた図形サイズ制御の手法
+- lerp() による音量変化のスムージング処理
+- 音量を利用した円やパーティクルの反応表現
+
+## 来週の内容(予定)
+- FFTを使った周波数成分ごとの振幅値を利用した描画
 
-let smoothed = 0;          // スムージング用
-let smoothing_ratio = 0.2; // 小さいほどゆっくり変化
-let threshold = 0.04;      // この音量を超えたら生成
-
-function setup() {
-  createCanvas(windowWidth, windowHeight);
-  mic = new p5.AudioIn();
-  mic.start(); // クリックで有効化が必要な場合あり
-}
-
-function draw() {
-  background(0);
-
-  // マイク音量を取得
-  let level = mic.getLevel();
-
-  // スムージング（急に跳ねすぎるのを防ぐ）
-  smoothed = lerp(smoothed, level, smoothing_ratio);
-
-  // 一定以上の音がきたら波紋を追加
-  if (smoothed > threshold) {
-    ripples.push(new Ripple(width / 2, height / 2));
-  }
-
-  // 波紋の更新＆描画
-  for (let p of ripples) {
-    p.update();
-    p.display();
-  }
-
-  // 寿命が尽きた波紋を削除
-  for (let i = ripples.length - 1; i >= 0; i--) {
-    if (ripples[i].isDead()) {
-      ripples.splice(i, 1);
-    }
-  }
-}
-```
-
----
-
-## 矢印キーでしきい値 threshold を調整する
-
-- 波紋が「出すぎる / 出なさすぎる」問題を  
-  **矢印キーでリアルタイム調整**できるようにする
-- `ArrowUp` キー：threshold を **増やす** → 大きい音でだけ反応
-- `ArrowDown` キー：threshold を **減らす** → 小さい音でも反応
-- `console.log(threshold);` で現在値を確認
-
-```javascript
-function keyPressed(){
-  if (key == "f") {
-    let fs = fullscreen();
-    fullscreen(!fs);
-  }
-
-  // 上キーでしきい値アップ
-  if (key == "ArrowUp") {
-    threshold += 0.001;
-    if (threshold > 0.5) {
-      threshold = 0.5;
-    }
-    console.log(threshold);
-  }
-
-  // 下キーでしきい値ダウン
-  if (key == "ArrowDown") {
-    threshold -= 0.001;
-    if (threshold < 0.01) {
-      threshold = 0.01;
-    }
-    console.log(threshold);
-  }
-}
-```
-
----
-
-# 応用：帯域ごとの波紋を出す
-##([サンプルコード](https://editor.p5js.org/takano_ma/sketches/66QiN3n9Q))
-
----
-
-- FFTで **低音 / 中音 / 高音** のエネルギーを取得
-- 帯域ごとに値を**スムージング & 正規化**
-- 各帯域にそれぞれ **しきい値（threshold）** を設定
-- しきい値を超えた帯域ごとに  
-  **位置と色の違う波紋（Ripple）** を生成する
-
----
-
-## 変数の準備（帯域ごとのスムージングとしきい値）
-
-- `smoothingBass / Mid / Treble`：帯域ごとのスムージング用
-- `thresholdBass / Mid / Treble`：帯域ごとのしきい値（0〜1）
-- `ripples`：生成された波紋を入れておく配列
-
-```javascript
-let mic;
-let fft;
-let ripples = [];
-
-// 帯域ごとのスムージング用
-let smoothingBass = 0;
-let smoothingMid = 0;
-let smoothingTreble = 0;
-let smoothing_ratio = 0.2;
-
-// 帯域別の threshold（0〜1）
-let thresholdBass = 0.725;
-let thresholdMid = 0.4;
-let thresholdTreble = 0.2;
-```
-
----
-
-## setup：マイク入力とFFTの準備
-
-```javascript
-function setup() {
-  createCanvas(windowWidth, windowHeight);
-  background(0);
-
-  mic = new p5.AudioIn();
-  mic.start(); // クリックで有効化が必要な場合あり
-
-  fft = new p5.FFT();   // FFTの準備
-  fft.setInput(mic);    // マイク入力を解析対象にする
-}
-```
-
----
-
-## 帯域ごとのスムージングと正規化
-
-- `fft.getEnergy("bass")` などで帯域別の値（0〜255）を取得し，`lerp()`で補完
-
-```javascript
-  let bass   = fft.getEnergy("bass");
-  let mid    = fft.getEnergy("mid");
-  let treble = fft.getEnergy("treble");
-
-  // スムージング
-  smoothingBass   = lerp(smoothingBass,   bass,   smoothing_ratio);
-  smoothingMid    = lerp(smoothingMid,    mid,    smoothing_ratio);
-  smoothingTreble = lerp(smoothingTreble, treble, smoothing_ratio);
-
-  // 0〜255 → 0〜1 に正規化
-  let bassNorm   = smoothingBass   / 255;
-  let midNorm    = smoothingMid    / 255;
-  let trebleNorm = smoothingTreble / 255;
-```
-
----
-
-## 帯域ごとの閾値を超えたかの判定
-
-- 各帯域ごとに `bassNorm > thresholdBass` などで判定
-- しきい値を超えた帯域に応じて  
-  **波紋を出す位置を変える**
-
-```javascript
-  // 各帯域の threshold 判定
-  if (bassNorm > thresholdBass) {
-    ripples.push(new Ripple(width / 2, height / 2, "bass"));
-  }
-
-  if (midNorm > thresholdMid) {
-    ripples.push(new Ripple(width / 4,         height / 2, "mid"));
-    ripples.push(new Ripple(width - width / 4, height / 2, "mid"));
-  }
-
-  if (trebleNorm > thresholdTreble) {
-    ripples.push(new Ripple(width / 10,          height / 2, "treble"));
-    ripples.push(new Ripple(width - width / 10,  height / 2, "treble"));
-  }
-
-  // 波紋の更新＆描画
-  for (let r of ripples) {
-    r.update();
-    r.display();
-  }
-```
-
----
-
-## 引数に type を入れて色分けする Ripple クラス
-
-- `constructor`に第三引数の`type`を追加
-- `type` に `"bass" / "mid" / "treble"` を渡して，`display()`で色を分ける
-
-```javascript
-  constructor(x, y, type) {
-    this.type = type;"treble"
-  }
-  display(){
-    if (this.type === "bass") {
-      stroke(0, 150, 255, this.lifespan);
-    } else if (this.type === "mid") {
-      stroke(0, 255, 150, this.lifespan);
-    } else if (this.type === "treble") {
-      stroke(255, 200, 0, this.lifespan);
-    }
-  }
-```
-
----
-
-
-# 応用：マイク音量に反応してパーティクルを生成する
-## ([サンプルコード](https://editor.p5js.org/takano_ma/sketches/EHtn1B1mf))
-
-
-- パーティクルクラスをマイク入力のコードに反映
-- 生成のタイミングを音量によって操作する
-
-
----
-
-## マイク音量を取得してしきい値で判定
-
-- `mic.getLevel()`：マイク入力の音量（0〜1）を取得
--  閾値の変数(`threshold`) を用意して、超えたらパーティクルを生成
-
-```javascript
-//コードの初期変数の設定
-let mic;
-let particles = [];
-
-let smoothed = 0;
-let smoothing_ratio = 0.2;
-let threshold = 0.04; // 閾値の変数を準備
-```
-
----
-
-## draw() で音量に応じてパーティクルを追加
-
-- 音量がthresholdを超えた際に、particlesの新しいインスタンスを作る
-
-```javascript
-  // 音量を取得
-  let level = mic.getLevel();
-  console.log(level); // threshold の調整に便利
-
-  // スムージング
-  smoothed = lerp(smoothed, level, smoothing_ratio);
-
-  // 一定以上ならパーティクル生成
-  if (smoothed > threshold) {
-    let x = random(width);
-    let y = random(height);
-    particles.push(new Particle(x, y));
-  }
-  //以下省略
-```
-
-
----
-
-# (来週用)FFTによるスペクトル・アナライザー
-
----
-
-
-## FFTでスペクトルを可視化
-
-- FFTで **周波数ごとの強さ（0〜255）** を配列として取得
-- 配列のインデックスが **左＝低音 → 右＝高音**
-- 各要素を **棒グラフの位置と高さ** に対応させて描画
-- `bin_size` で「何個ごとに描画するか」（バーの間隔と太さ）を調整する
-
----
-
-## スペクトラムアナライザーとは
-
-- 音を **周波数ごとの成分** に分解して強さを棒グラフで表示するもの
-- 左から右に向かって **低音 → 中音 → 高音** の順に並ぶ
-- 棒の高さ = その帯域のエネルギーの大きさ（p5.jsでは 0〜255）
-- p5.FFTで `fft.analyze()` を使うと，この「周波数ごとの強さの配列」が取得できる
-- その配列の値を，**x座標（位置）と高さ（h）にマッピングして描画**すると，
-  自作のスペクトラムアナライザーになる
-
----
-
-## p5.FFT とマイクの準備（setup内）
-
-```javascript
-let mic;
-let fft;
-let bin_size = 10; // 棒グラフ1本あたりの間隔と太さ
-
-function setup(){
-  createCanvas(windowWidth, 500);
-  
-  mic = new p5.AudioIn();
-  mic.amp(1); // マイク入力の音量を調整
-  mic.start();
-  
-  fft = new p5.FFT(0.9); // FFTのインスタンス作成，0.0〜1.0でスペクトルのスムージング
-  fft.setInput(mic);
-
-  colorMode(HSB, 360, 100, 100, 100); // HSBモード→ビンごとに色相を変えられる
-}
-```
-
----
-
-## FFTでスペクトルを取得する
-
-```javascript
-function draw(){
-  background(0);
-
-  // このフレームの入力音をFFT解析して，
-  // 周波数ごとの強さ（0〜255）を配列で取得
-  let spectrum = fft.analyze();
-
-  noStroke();
-  for (let i = 0; i < spectrum.length; i += bin_size){
-    // i番目のビンの位置を，
-    // 配列のインデックス→画面のx座標にマッピング
-    // （左が低音，右が高音）
-    let x = map(i, 0, spectrum.length, 0, width);
-    // 次のページへ…
-```
-
----
-
-## ビンの振幅を高さと色に対応させる
-
-```javascript
-    // 各ビンの振幅（0〜255）をバーの高さ（0〜height）に変換し，
-    // 上方向に伸びるように負の値にする
-    let h = -map(spectrum[i], 0, 255, 0, height);
-
-    // ビンの位置（周波数）に応じて
-    // 色相を0〜360度に対応させる
-    let Hue = map(i, 0, spectrum.length, 0, 360);
-    fill(Hue, 50, 100, 100);
-
-    // 画面下から上に向かって棒グラフを描画
-    rect(x, height, bin_size, h);
-  }
-}
-```
