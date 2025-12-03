@@ -69,8 +69,6 @@ footer: 音の入力と可視化表現
 - 入力音のレベル値を使って描画を制御する
 - 主に二つの利用方法がある
   ①：音量を使って大きさや色のパラメータを制御
-    - ellipseやrectの大きさと色を変える
-    - 動いているオブジェクトの大きさを制御する
   ②：閾値を設定して生成のトリガーにする
     - パーティクルやオブジェクトの生成に音量を利用する
 - 今回は①の方を扱う
@@ -136,6 +134,11 @@ function draw() {
 }
 ```
 
+---
+
+## 残像が残る描画のイメージ
+
+<img src="./img/第四回/音量の変化を残像で見やすくする.png" width="700" class = "center-img">
 
 ---
 
@@ -189,6 +192,14 @@ function draw() {
 }
 
 ```
+---
+
+## スムージングとそのままの比較（[コード](https://editor.p5js.org/takano_ma/sketches/TbiPmxRq4)）
+- 左がスムージング、右がそのままの音量（補間した分、小さい変化）
+
+
+<img src="./img/第四回/スムージングと比較.png" width="800" class = "center-img">
+
 
 ---
 
@@ -247,12 +258,12 @@ function setup() {
 ## 再生に関する注意（クリックで再生・一時停止）
 
 - ブラウザの仕様で「ユーザー操作なしで音を鳴らせない」ようになっている
-- `getAudioContext().resume()` を **クリック時に呼ぶ**と安全
+- マウスクリックで切り替えを行うコードを入れると利用が可能
 - 再生と一時停止は `soundFile.play()` / `soundFile.pause()` を切り替える
 
 ```javascript
 function mousePressed() {
-  // ブラウザのオーディオ制限対策
+  // Web Audio API が停止中ならクリックで起動
   if (getAudioContext().state !== 'running') {
     getAudioContext().resume();
   }
@@ -298,16 +309,38 @@ function draw() {
 
 ---
 
-## 音でパーティクルを制御する考え方
+## 音でパーティクルを制御する
+ 
+- スムージング後の値をパーティクルの**サイズ・速度**の倍率に変換  
+- パーティクルのクラスに音量を入力する仕様にアレンジ
 
-- mic.getLevel() で「音量（0〜1）」を取得できる  
-- 音量は揺れが激しいため **lerp() でスムージング**  
-- スムージング後の値を **パーティクルのサイズ・速度の倍率に変換**  
-- パーティクルの基本構造は前回扱ったため、今回は「音との連動」に注目
+<img src="./img/第四回/音に反応するパーティクル.png" width="900" class="center-img">
 
 ---
 
-## 音量をスムージングして倍率に変換する
+## パーティクルクラス：サイズと速度を受け取れるように調整
+
+```javascript
+  update(scale) { // 引数で速度の倍率を受け取る
+    this.x += this.vx * scale;  // 音量を速度にかける
+    this.y += this.vy * scale;
+    //キャンバスの外側に出た場合、反対側に移動させる
+    if(this.x < 0) this.x = width;
+    if(this.x > width) this.x = 0;
+    if(this.y < 0) this.y = height;
+    if(this.y > height) this.y = 0;
+  }
+  display(scale) { // 引数で大きさの倍率を受け取る
+    noStroke();
+    fill(this.col, 80, 100, 50);
+    let s = this.baseSize * scale; // 音量でサイズを変える
+    ellipse(this.x, this.y, s, s);
+  }
+```
+
+---
+
+## 音量をサイズや速度の倍率に変換する
 
 ```javascript
 let smoothed = 0;          // スムージング後の音量
@@ -328,11 +361,8 @@ function draw() {
 
 ---
 
-## パーティクルに倍率を渡して反映させる
+## パーティクルの引数に倍率を渡して反映させる
 
-- update(scale) で **速度に倍率をかける**
-- display(scale) で **大きさに倍率をかける**
-- 音が大きいほど速く・大きく動く表現が可能
 
 ```javascript
 for (let p of particles) {
@@ -343,41 +373,11 @@ for (let p of particles) {
 
 ---
 
-## パーティクルクラス：サイズと速度に scale を反映
-
-```javascript
-class Particle {
-  constructor(x, y) {
-    this.x = x; this.y = y;
-    this.col = random(0, 360);
-    this.vx = random(-0.5, 0.5); this.vy = random(-0.5, 0.5);
-    this.baseSize = random(5, 20); // 基本サイズ
-  }
-  update(scale) {
-    this.x += this.vx * scale;  // 音量を速度にかける
-    this.y += this.vy * scale;
-
-    // 端で跳ね返る
-    if (this.x < 0 || this.x > width) this.vx *= -1;
-    if (this.y < 0 || this.y > height) this.vy *= -1;
-  }
-  display(scale) {
-    noStroke();
-    fill(this.col, 80, 100, 50);
-    let s = this.baseSize * scale; // 音量でサイズを変える
-    ellipse(this.x, this.y, s, s);
-  }
-}
-```
-
----
-
 ## アレンジ：移動する方向を限定する
 
-- パーティクルごとに縦か横のどちらかの移動に限定する
+- ランダムすぎる動きは統一感が出ないため、縦か横のどちらかの移動に限定
 - 初期設定で移動軸を決める変数を用意
-  - [マイクのコード](https://editor.p5js.org/takano_ma/sketches/fGRciqTxC)
-  - [音源のコード](https://editor.p5js.org/takano_ma/sketches/B_rNYBOwh)
+  - ([マイクのコード](https://editor.p5js.org/takano_ma/sketches/fGRciqTxC))   ([音源のコード](https://editor.p5js.org/takano_ma/sketches/B_rNYBOwh))
 
 ```javascript
   constructor(x, y) {
