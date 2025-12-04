@@ -2,17 +2,17 @@ import pikepdf
 from pikepdf import OutlineItem
 
 # 元PDFと出力PDF
-INPUT_PDF = "3-particle_mouseInteraction.pdf"
-OUTPUT_PDF = "3-particle_mouseInteraction_with_TOC.pdf"
+INPUT_PDF = "4-audio-reactive.pdf"
+OUTPUT_PDF = "4-audio-reactive_with_TOC.pdf"
 
 # 目次にしたい項目（タイトル, ページ番号）※ページ番号は「PDFビューアに表示される番号」
 toc = [
-    ("第3回 クリエイティブ・コーディング入門", 1),
-    ("パーティクルによるアニメーション", 4),
-    ("パーティクルに寿命をつける", 12),
-    ("応用：マウスの位置を使ったパーティクル生成", 21),
-    ("演習：パーティクル表現をアレンジしてみる", 26),
-    ("補足資料：windowResizedとfullScreen", 34)
+    ("第4回 クリエイティブ・コーディング入門", 1),
+    ("p5.soundライブラリについて", 4),
+    ("マイクの入力音を使う", 8),
+    ("lerpを使った音量のスムージング", 13),
+    ("音源ファイルの利用", 18),
+    ("応用：音でパーティクルの大きさや速度を変える", 24)
 ]
 
 # PDFを開く
