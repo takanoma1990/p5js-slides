@@ -24,8 +24,8 @@ footer: 音の入力と可視化表現
 
 - リアルタイムで音に反応する視覚表現のこと
 - 音の変化を視覚化することで、リアルタイムな変化を強調する
-- 様々なビジュアル・プログラミング・ツールで
-- 参考事例
+- 様々なビジュアル・プログラミング・ツールで制作されている
+- 参考事例（p5.js以外の例）
   - [Sumberser - audio reactive Quartz Composer](https://www.youtube.com/watch?v=NVTiI9Zye_o)
   - [TouchDesigner AudioVisual](https://www.youtube.com/watch?v=w5RhMsfN6lU)
 
@@ -59,7 +59,7 @@ footer: 音の入力と可視化表現
 ## p5.sound の読み込み
 
 - Web Editor は`index.html`内でCDNによってライブラリが読み込まれている
-  - CDN :外部サーバーからライブラリを読み込む仕組み
+  - CDN：外部サーバーからライブラリを読み込む仕組み
   - `<script src="https://cdn~~/p5.sound.min.js">`の部分
 
 ---
@@ -69,7 +69,7 @@ footer: 音の入力と可視化表現
 - 入力音のレベル値を使って描画を制御する
 - 主に二つの利用方法がある
   ①：音量を使って大きさや色のパラメータを制御
-  ②：閾値を設定して生成のトリガーにする
+  ②：閾値を設定して生成のトリガーとして利用する
     - パーティクルやオブジェクトの生成に音量を利用する
 - 今回は①の方を扱う
 ---
@@ -120,7 +120,7 @@ function draw() {
 # 背景の透明度を下げて残像を残しておく（[サンプルコード](https://editor.p5js.org/takano_ma/sketches/jphz_RyWa)）
 
 - 音量は変化が激しいため、そのままだと描画の変化も激しい
-- 背景の透明度を低くすると前フレームの残像が残るので少し滑らかに見える
+- 背景に低い透明度を設定すると前フレームの残像が残り、動きが少し滑らかに
 
 ```javascript
 function draw() {
@@ -149,10 +149,10 @@ function draw() {
 
 ## lerp()で音量の変化を滑らかに
 
-- `getLevel()` の値をそのまま使うと変化が激しくなってしまう
+- `getLevel()` の値をそのまま使うと変化が急になりやすい
 - lerp関数を使って変化を滑らかにする
   - `lerp(a, b, t)`：a から b へ t の割合だけ近づける（0〜1）
-- 前フレームの値用に `smoothLevel` を用意しておく
+- 前フレームの値を保持するために `smoothLevel` を用意する
 - `smoothLevel = lerp(smoothLevel, level, 0.1);`
 - 得られた `smoothLevel` を `map()` で円の直径に変換
 
@@ -166,7 +166,7 @@ function draw() {
   - `let level = mic.getLevel();`
   - `smoothLevel = lerp(smoothLevel, level, 0.1);`
   - `diameter = map(smoothLevel, 0, 1, 0, width);`
-- あとは `ellipse(width/2, height/2, diameter);` で円を描画
+  - `ellipse(width/2, height/2, diameter);` で円を描画
 
 
 ---
@@ -258,7 +258,7 @@ function setup() {
 ## 再生に関する注意（クリックで再生・一時停止）
 
 - ブラウザの仕様で「ユーザー操作なしで音を鳴らせない」ようになっている
-- マウスクリックで切り替えを行うコードを入れると利用が可能
+- クリックなどで再生／停止を切り替えるコードを入れることで利用可能に
 - 再生と一時停止は `soundFile.play()` / `soundFile.pause()` を切り替える
 
 ```javascript
@@ -281,7 +281,7 @@ function mousePressed() {
 ## draw内での音量取得と可視化
 
 - マイクの時とほとんど同じように`getLevel()`で0~1の音量レベルを取得
-- lerpで変化を滑らかにして、mapで円の大きさの値に変換
+- lerp で音量変化を滑らかにし、map で円の大きさに変換
 
 ```javascript
 function draw() {
@@ -375,7 +375,7 @@ for (let p of particles) {
 
 ## アレンジ：移動する方向を限定する
 
-- ランダムすぎる動きは統一感が出ないため、縦か横のどちらかの移動に限定
+- ランダムすぎると統一感がなくなるため、縦または横のどちらかの移動に限定
 - 初期設定で移動軸を決める変数を用意
   - ([マイクのコード](https://editor.p5js.org/takano_ma/sketches/fGRciqTxC))   ([音源のコード](https://editor.p5js.org/takano_ma/sketches/B_rNYBOwh))
 
@@ -410,5 +410,6 @@ for (let p of particles) {
 - 音量を利用した円やパーティクルの反応表現
 
 ## 来週の内容(予定)
-- FFTを使った周波数成分ごとの振幅値を利用した描画
+- peakDetectや閾値を用いた映像の生成
+- FFT を使った周波数成分ごとの振幅値を用いた描画
 

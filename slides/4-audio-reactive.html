@@ -21,8 +21,8 @@
 <ul>
 <li>リアルタイムで音に反応する視覚表現のこと</li>
 <li>音の変化を視覚化することで、リアルタイムな変化を強調する</li>
-<li>様々なビジュアル・プログラミング・ツールで</li>
-<li>参考事例
+<li>様々なビジュアル・プログラミング・ツールで制作されている</li>
+<li>参考事例（p5.js以外の例）
 <ul>
 <li><a href="https://www.youtube.com/watch?v=NVTiI9Zye_o">Sumberser - audio reactive Quartz Composer</a></li>
 <li><a href="https://www.youtube.com/watch?v=w5RhMsfN6lU">TouchDesigner AudioVisual</a></li>
@@ -73,7 +73,7 @@
 <ul>
 <li>Web Editor は<code>index.html</code>内でCDNによってライブラリが読み込まれている
 <ul>
-<li>CDN :外部サーバーからライブラリを読み込む仕組み</li>
+<li>CDN：外部サーバーからライブラリを読み込む仕組み</li>
 <li><code>&lt;script src=&quot;https://cdn~~/p5.sound.min.js&quot;&gt;</code>の部分</li>
 </ul>
 </li>
@@ -87,7 +87,7 @@
 <li>入力音のレベル値を使って描画を制御する</li>
 <li>主に二つの利用方法がある<br />
 ①：音量を使って大きさや色のパラメータを制御<br />
-②：閾値を設定して生成のトリガーにする
+②：閾値を設定して生成のトリガーとして利用する
 <ul>
 <li>パーティクルやオブジェクトの生成に音量を利用する</li>
 </ul>
@@ -150,7 +150,7 @@
 <h1 id="%E8%83%8C%E6%99%AF%E3%81%AE%E9%80%8F%E6%98%8E%E5%BA%A6%E3%82%92%E4%B8%8B%E3%81%92%E3%81%A6%E6%AE%8B%E5%83%8F%E3%82%92%E6%AE%8B%E3%81%97%E3%81%A6%E3%81%8A%E3%81%8F%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB%E3%82%B3%E3%83%BC%E3%83%89">背景の透明度を下げて残像を残しておく（<a href="https://editor.p5js.org/takano_ma/sketches/jphz_RyWa">サンプルコード</a>）</h1>
 <ul>
 <li>音量は変化が激しいため、そのままだと描画の変化も激しい</li>
-<li>背景の透明度を低くすると前フレームの残像が残るので少し滑らかに見える</li>
+<li>背景に低い透明度を設定すると前フレームの残像が残り、動きが少し滑らかに</li>
 </ul>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">draw</span>(<span class="hljs-params"></span>) {
   <span class="hljs-title function_">background</span>(<span class="hljs-number">0</span>, <span class="hljs-number">5</span>);<span class="hljs-comment">//透明度を下げて残像が残るように</span>
@@ -180,13 +180,13 @@
 <header>p5.js 授業 第4回</header>
 <h2 id="lerp%E3%81%A7%E9%9F%B3%E9%87%8F%E3%81%AE%E5%A4%89%E5%8C%96%E3%82%92%E6%BB%91%E3%82%89%E3%81%8B%E3%81%AB">lerp()で音量の変化を滑らかに</h2>
 <ul>
-<li><code>getLevel()</code> の値をそのまま使うと変化が激しくなってしまう</li>
+<li><code>getLevel()</code> の値をそのまま使うと変化が急になりやすい</li>
 <li>lerp関数を使って変化を滑らかにする
 <ul>
 <li><code>lerp(a, b, t)</code>：a から b へ t の割合だけ近づける（0〜1）</li>
 </ul>
 </li>
-<li>前フレームの値用に <code>smoothLevel</code> を用意しておく</li>
+<li>前フレームの値を保持するために <code>smoothLevel</code> を用意する</li>
 <li><code>smoothLevel = lerp(smoothLevel, level, 0.1);</code></li>
 <li>得られた <code>smoothLevel</code> を <code>map()</code> で円の直径に変換</li>
 </ul>
@@ -202,9 +202,9 @@
 <li><code>let level = mic.getLevel();</code></li>
 <li><code>smoothLevel = lerp(smoothLevel, level, 0.1);</code></li>
 <li><code>diameter = map(smoothLevel, 0, 1, 0, width);</code></li>
+<li><code>ellipse(width/2, height/2, diameter);</code> で円を描画</li>
 </ul>
 </li>
-<li>あとは <code>ellipse(width/2, height/2, diameter);</code> で円を描画</li>
 </ul>
 <footer>音の入力と可視化表現</footer>
 </section>
@@ -302,7 +302,7 @@
 <h2 id="%E5%86%8D%E7%94%9F%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E6%B3%A8%E6%84%8F%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF%E3%81%A7%E5%86%8D%E7%94%9F%E3%83%BB%E4%B8%80%E6%99%82%E5%81%9C%E6%AD%A2">再生に関する注意（クリックで再生・一時停止）</h2>
 <ul>
 <li>ブラウザの仕様で「ユーザー操作なしで音を鳴らせない」ようになっている</li>
-<li>マウスクリックで切り替えを行うコードを入れると利用が可能</li>
+<li>クリックなどで再生／停止を切り替えるコードを入れることで利用可能に</li>
 <li>再生と一時停止は <code>soundFile.play()</code> / <code>soundFile.pause()</code> を切り替える</li>
 </ul>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">mousePressed</span>(<span class="hljs-params"></span>) {
@@ -325,7 +325,7 @@
 <h2 id="draw%E5%86%85%E3%81%A7%E3%81%AE%E9%9F%B3%E9%87%8F%E5%8F%96%E5%BE%97%E3%81%A8%E5%8F%AF%E8%A6%96%E5%8C%96">draw内での音量取得と可視化</h2>
 <ul>
 <li>マイクの時とほとんど同じように<code>getLevel()</code>で0~1の音量レベルを取得</li>
-<li>lerpで変化を滑らかにして、mapで円の大きさの値に変換</li>
+<li>lerp で音量変化を滑らかにし、map で円の大きさに変換</li>
 </ul>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">draw</span>(<span class="hljs-params"></span>) {
   <span class="hljs-title function_">background</span>(<span class="hljs-number">0</span>);
@@ -415,7 +415,7 @@
 <header>p5.js 授業 第4回</header>
 <h2 id="%E3%82%A2%E3%83%AC%E3%83%B3%E3%82%B8%E7%A7%BB%E5%8B%95%E3%81%99%E3%82%8B%E6%96%B9%E5%90%91%E3%82%92%E9%99%90%E5%AE%9A%E3%81%99%E3%82%8B">アレンジ：移動する方向を限定する</h2>
 <ul>
-<li>ランダムすぎる動きは統一感が出ないため、縦か横のどちらかの移動に限定</li>
+<li>ランダムすぎると統一感がなくなるため、縦または横のどちらかの移動に限定</li>
 <li>初期設定で移動軸を決める変数を用意
 <ul>
 <li>(<a href="https://editor.p5js.org/takano_ma/sketches/fGRciqTxC">マイクのコード</a>)   (<a href="https://editor.p5js.org/takano_ma/sketches/B_rNYBOwh">音源のコード</a>)</li>
@@ -456,7 +456,8 @@
 </ul>
 <h2 id="%E6%9D%A5%E9%80%B1%E3%81%AE%E5%86%85%E5%AE%B9%E4%BA%88%E5%AE%9A">来週の内容(予定)</h2>
 <ul>
-<li>FFTを使った周波数成分ごとの振幅値を利用した描画</li>
+<li>peakDetectや閾値を用いた映像の生成</li>
+<li>FFT を使った周波数成分ごとの振幅値を用いた描画</li>
 </ul>
 <footer>音の入力と可視化表現</footer>
 </section>
