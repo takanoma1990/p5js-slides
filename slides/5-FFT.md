@@ -161,7 +161,7 @@ function keyPressed(){
 
 ---
 
-## アレンジ：音量に対応して線の太さを変える([コード](https://editor.p5js.org/takano_ma/sketches/ezlJKNoaD))
+## アレンジ：音量に応じて線の太さを変える([コード](https://editor.p5js.org/takano_ma/sketches/ezlJKNoaD))
 
 - 音量で線の太さが変わるようにして，音の強弱を表現
 ```javascript
@@ -204,7 +204,7 @@ function keyPressed(){
 ---
 
 ## Particle.jsを作る
-- パーティクルのクラスのJSファイルを用意してindex.htmlで読み込み
+- パーティクルのクラスを別の JS ファイルとして用意し、index.html で読み込む
 
 <img src="./img/第五回/パーティクルのJSファイル.png" width="900" class = "center-img">
 
@@ -282,7 +282,7 @@ let particles = []; // インスタンス用の配列
 
 ## FFTでスペクトルを可視化
 
-- FFTで **周波数ごとの強さ（0〜255）** を配列として取得
+- FFTで **周波数ごとのエネルギー（0〜255）** を配列として取得
 - 配列のインデックスが **左＝低音 → 右＝高音**
 - 各要素を **棒グラフの位置と高さ** に対応させて描画
 
@@ -352,7 +352,7 @@ function draw() {
 ## ビンの色とサイズを調整する
 
 
-- 描画するビンの横幅の変数を用意して、その横幅に合わせて描画
+- ビンの横幅（解像度）を変数として設定し、その値に合わせて描画
 - HSBモードで帯域ごとに固有の色相の値を設定する
 <img src="./img/第五回/色とビンサイズの調整.png" width="800" class = "center-img">
 
@@ -409,7 +409,7 @@ function draw() {
 
 ---
 
-## シンメトリーなアナライザー + 音に反応する円の組み合わせ
+## シンメトリックなアナライザー + 音に反応する円の組み合わせ
 
 
 <img src="./img/第五回/シンメトリーなスペクトログラム.png" width="900" class="center-img">
@@ -417,7 +417,7 @@ function draw() {
 
 ---
 
-## シンメトリーなアナライザーの作成
+## シンメトリックなアナライザーを作成
 - `rectMode(CENTER)`に設定して，上下に四角形が伸びるようにする
 - `map(i, 0, spectrogram.length, 0, width/2);`にして画面の半分の幅に
 - rectを二つ用意して，`width/2`を基準に左右に描画する
@@ -454,7 +454,7 @@ function draw() {
 
 ---
 
-# アレンジ②：複数の描画要素を組み合わせ
+# アレンジ②：複数の描画要素を組み合わせる
 ## ([コード](https://editor.p5js.org/takano_ma/sketches/cEG6NqF-S))
 
 
