@@ -3,7 +3,7 @@ marp: true
 theme: gradient_v2
 paginate: true
 class: p5_v2
-header: p5.js 授業 第5回
+header: p5.js 授業 第6回
 footer: 音の入力と可視化表現
 ---
 
