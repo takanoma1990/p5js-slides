@@ -7,6 +7,36 @@ header: p5.js 授業 第6回
 footer: 音の入力と可視化表現
 ---
 
+
+<!-- _unsafe: true -->
+<style>
+.twocol {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap:30px;              /* ← ここで間隔を調整 */
+  width: 85%;
+  margin: 0 auto;
+}
+.twocol .geometric_pattern_1 {
+  width: 40%;     /* ← 左の画像のサイズ */
+}
+.twocol .geometric_pattern_2 {
+  width: 50%;     /* ← 右の画像のサイズ */
+}
+.footer {
+  font-size: 0.75em !important;
+  color: yellow;
+}
+.footer a {
+  color: black;
+  text-decoration: none;
+}
+
+</style>
+
+
+
 <!-- _unsafe: true -->
 <style>
 .center-img {
@@ -23,14 +53,12 @@ footer: 音の入力と可視化表現
 
 ## 今日の内容
 
-- カメラの入力（+映像の入力）
-- 画像認識ライブラリの利用（MediaPipe)
-- 外部ライブラリの読み込み方法
-- 手や顔、姿勢などの計測
+- 外部ライブラリの利用
+- MediaPipeを使った手の位置情報を取得
 - 応用例：手の位置情報を用いた表現
     - パーティクルの生成
-    - 両手距離を使った描画の制御
-- 応用例：ジェスチャ認識
+    - 距離を使った描画の制御
+- その他の生体情報の検出例
 
 ---
 
@@ -38,62 +66,54 @@ footer: 音の入力と可視化表現
 
 ---
 
-## p5.jsでの外部ライブラリの利用
+## CDNで外部ライブラリを利用する
 
-- p5.js本体だけでは高度な処理は難しい
-- 外部ライブラリで機能を拡張して使う
-- scriptタグでCDNから読み込む
-- カメラや音、認識処理を簡単に扱える
-- 作品制作では複数ライブラリ併用が一般的
 
----
+- htmlのscriptタグでCDNから読み込むことが可能
+- p5.jsもCDNで読み込まれている
 
-# MediaPipeについて
+```html
+<head>
 
----
+<script src="https://cdn.jsdelivr.net/npm/・・・/p5.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/・・・/p5.sound.min.js"></script>
 
-## MediaPipeとは
+</head>
+```
 
-- Googleが提供する画像認識ライブラリ
-- カメラ映像から人体情報を取得できる
-- 機械学習モデルを内部で利用している
-- Web・スマホ・PCで幅広く利用可能
-- リアルタイム処理に強いのが特徴
 
 ---
 
-## 種類（Solution系とTask系）
+## MediaPipe
 
-- MediaPipeには大きく2つの系統がある
-- Solution系はシンプルで扱いやすい
-- Task系は認識や分類まで行える
-- 用途や目的によって使い分ける
-- 初学者はSolution系から始めやすい
+- Google提供の機械学習ライブラリ
+- CDNで比較的簡単に利用できる
+- 映像から生体情報を取得
+- 音声認識などもできる
+
+<div class="footer">
+  <a href="https://ai.google.dev/edge/mediapipe/solutions/guide?hl=ja#available_solutions">参考：<u>MediaPipeソリューションズ</u></a>
+</div>
+
+![bg right:48% w:90%](./img/第六回/ml-solutions-in-mediapipe.jpg)
 
 ---
 
-## Solution系（今回は基本的にこれ）
+## MediaPipeを使った生体計測
 
 - 手や顔、姿勢などを点群として取得
 - 座標情報（landmarks）が主な出力
-- scriptタグだけで簡単に使える
-- p5.jsとの相性がとても良い
 - 計測や可視化表現に向いている
+- 今回はこれを利用する
 
----
-
-## Task系（ジェスチャ認識など）
-
-- 座標に加えて「意味」を認識できる
-- ジェスチャや物体の分類が可能
-- モデルを切り替えて高度な処理ができる
-- module形式での読み込みが基本
-- 応用的・発展的な制作向け
 
 ---
 
 # 手の位置情報を取得
 ## [サンプルコード](https://editor.p5js.org/takano_ma/sketches/m9cIM9XnN)
+
+
+![bg right:48% w:90%](./img/第六回/手の検出.png)
 
 ---
 
@@ -104,12 +124,6 @@ footer: 音の入力と可視化表現
 - `onResults()`で認識結果を`handsRes`に保存する
 - `processFrame()`内で`hands.send()`を繰り返し実行する
 - `draw()`関数で手の位置情報を使った描画を行う
-
-```javascript
-cam = createCapture(VIDEO, { flipped: true });
-hands = new Hands({ locateFile: (file) => base + file });
-hands.onResults((res) => (handsRes = res));
-```
 
 ---
 
@@ -129,20 +143,28 @@ hands.onResults((res) => (handsRes = res));
 
 ---
 
-## 用意するグローバル変数について
+## グローバル変数を用意
 
-- `cam`はWebカメラ映像を保持するための変数
-- `hands`はMediaPipe Handsのインスタンスを指す
-- `handsRes`は毎フレーム更新される認識結果を保存する
-- `processing`は非同期処理の重複実行を防ぐために使う
-- `HAND_CONNECTIONS`は指の骨格構造を表す配列
+- インスタンス用の変数や配列を用意
+- `processing`は非同期処理の重複実行を防ぐために用意
+
 
 ```javascript
-let cam;
-let hands;
-let handsRes = null;
+let cam; //カメラ用のインスタンス変数
+let hands; //MediaPipe Hands用のインスタンス変数
+let handsRes = null; // 毎フレーム更新される認識結果を保存する
 let processing = false;
+```
 
+---
+
+## 手の関節の番号
+
+- `MULTI_HAND_LANDMARKS`に配列番号で手の関節の位置情報が格納される
+- 関節を`line`で繋げるための配列を用意
+
+```javascript
+//手の形状をlineでつなげる配列を用意
 const HAND_CONNECTIONS = [
   [0,1],[1,2],[2,3],[3,4],
   [0,5],[5,6],[6,7],[7,8],
@@ -152,15 +174,16 @@ const HAND_CONNECTIONS = [
 ];
 ```
 
+![bg right:40% width:90%](./img/第六回/手のランドマーク番号.png)
+
 ---
 
 ## setup関数でのカメラの準備
 
 - `setup()`内で`createCapture()`を呼びカメラを起動する
-- `{ flipped: true }`で鏡のような左右反転映像にする
+  - `{ flipped: true }`で鏡のような左右反転映像にする
 - `cam.size()`でカメラ映像と`canvas`サイズを揃える
 - `cam.hide()`でHTMLのvideo表示を非表示にする
-- `cam.elt`をMediaPipeに渡す入力画像として利用する
 
 ```javascript
 cam = createCapture(VIDEO, { flipped: true });
@@ -172,387 +195,220 @@ cam.hide();
 
 ## setup関数でのHandsのセットアップ
 
-- `new Hands()`でHandsクラスのインスタンスを作成する
-- `locateFile`でモデルファイルの読み込み先を指定する
+- インスタンスにモデルファイルを読み込む
 - `setOptions()`で最大手数や検出精度を設定する
-- `selfieMode: true`で自撮り用の左右解釈に合わせる
-- `onResults()`で解析結果を受け取る関数を登録する
 
 ```javascript
 hands = new Hands({ locateFile: (file) => base + file });
-
 hands.setOptions({
-  maxNumHands: 2,
-  modelComplexity: 1,
-  minDetectionConfidence: 0.5,
-  minTrackingConfidence: 0.5,
-  selfieMode: true,
+  maxNumHands: 2, //検出可能な最大手数
+  modelComplexity: 1, //モデル精度（0:軽量〜2:高精度）
+  minDetectionConfidence: 0.5, // 手を検出する最低信頼度
+  minTrackingConfidence: 0.5, // 検出後の手を追跡する最低信頼度
+  selfieMode: true, //セルフィーモードを設定（左右反転）
+});
+```
+
+---
+
+## setup関数でイベント処理を登録する
+
+- 推論完了時に結果を受け取る処理を登録する
+- カメラ準備完了後に推論ループを開始する処理を登録する
+
+```javascript
+hands.onResults(function (res) {        // 推論完了時に呼ばれる処理を登録
+  handsRes = res;                       // 最新の推論結果を保存
 });
 
-hands.onResults((res) => (handsRes = res));
+cam.elt.onloadedmetadata = function () { // カメラ準備完了後の処理を登録
+  requestAnimationFrame(processFrame);   // 推論ループを開始
+};
 ```
 
 ---
 
-## asyncでの読み込みについて（非同期処理）
+## asyncを使って非同期処理にする
 
-- `hands.send()`は内部で推論を行うため時間がかかる
-- `async / await`を使い処理の完了を待つ
-- `processing`フラグで同時実行を防止する
-- `requestAnimationFrame()`で更新タイミングを制御する
-- 非同期処理により描画と解析を安定させている
-
+- `hands.send()` の推論に時間がかかるため、`await`で完了まで待機させる
+- 描画ループ（p5.js）と推論処理を安全に同期させるための処理
+- 重い処理でも画面更新が止まらないようにする
 ```javascript
 async function processFrame() {
-  if (!cam?.elt || processing) return requestAnimationFrame(processFrame);
-
-  processing = true;
-  await hands.send({ image: cam.elt });
-  processing = false;
-
-  requestAnimationFrame(processFrame);
-}
-```
-
----
-
-## draw関数での手の位置情報の読み込み
-
-- `draw()`ではまず`image(cam, ...)`で映像を描画する
-- `handsRes.multiHandLandmarks`があれば手が検出されている
-- `landmark.x`と`landmark.y`は0〜1の正規化座標である
-- `width`と`height`を掛けてcanvas座標に変換する
-- 点や線として描画し表現やインタラクションに使う
-
-```javascript
-image(cam, 0, 0, width, height);
-
-if (handsRes?.multiHandLandmarks) {
-  for (const lm of handsRes.multiHandLandmarks) {
-    for (const [a, b] of HAND_CONNECTIONS) {
-      line(lm[a].x * width, lm[a].y * height,
-           lm[b].x * width, lm[b].y * height);
-    }
-    for (const p of lm) {
-      circle(p.x * width, p.y * height, 8);
-    }
+  if (!cam?.elt || processing) {          // カメラ未準備 or 推論中なら
+    requestAnimationFrame(processFrame);  // 次フレームだけ予約して
+    return;                               // 今回の処理は行わない
   }
+  processing = true;                      // 推論中フラグを立てる
+  await hands.send({ image: cam.elt });   // 推論完了まで待機（非同期）
+  processing = false;                     // 推論終了 → フラグ解除
+  requestAnimationFrame(processFrame);    // 次のフレームを処理
 }
 ```
 
----
-
-# 姿勢情報の検出
-## [サンプルコード](https://editor.p5js.org/takano_ma/sketches/rD96sGTJ3)
 
 ---
 
-## MediaPipeを使う手順（Pose）
+## draw関数で背景とカメラの映像を用意
 
-- `createCapture()`でカメラ映像を`cam`として取得する
-- `Pose`クラスを生成して姿勢推定モデルを初期化する
-- `onResults()`で結果を`poseRes`に保存して共有する
-- `processFrame()`で`pose.send()`を毎フレーム実行する
-- `draw()`で`poseLandmarks`を点や線にして可視化する
+- `background()` で毎フレーム背景をクリアする
+- `image(cam, ...)` でカメラ映像をキャンバス全体に描画する
+  - `image(img, x, y, width, height);`
+  - 表示位置（x, y）とサイズ（width, height）を指定できる
+
 
 ```javascript
-cam = createCapture(VIDEO, { flipped: true });
-pose = new Pose({ locateFile: (file) => base + file });
-pose.onResults((res) => (poseRes = res));
-```
-
----
-
-## index.htmlでライブラリを読み込む（Pose）
-
-- MediaPipe Solutionsは`script`タグで読み込んで使う
-- Pose用ライブラリを追加すると`Pose`クラスが使える
-- CDNを使うとファイル管理なしで実行できる
-- p5.js → MediaPipe Pose → `sketch.js`の順が安全
-- 読み込み順が崩れると`Pose is not defined`になる
-
-```javascript
-<script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js"></script>
-<script src="sketch.js"></script>
-```
-
----
-
-## 用意するグローバル変数について（Pose）
-
-- `cam`はWebカメラ映像（p5のキャプチャ）を保持する
-- `pose`はMediaPipe Poseのインスタンスを保持する
-- `poseRes`は姿勢推定の結果（landmarks等）を保存する
-- `processing`は非同期処理の二重実行を防ぐフラグ
-- `POSE_CONNECTIONS`は骨格線を描くための接続情報
-
-```javascript
-let cam;
-let pose;
-let poseRes = null;
-let processing = false;
-
-const POSE_CONNECTIONS = [
-  [0,1],[1,2],[2,3],[3,7],
-  [0,4],[4,5],[5,6],[6,8],
-  [9,10],
-  [11,12],
-  [11,13],[13,15],
-  [12,14],[14,16],
-  [11,23],[12,24],
-  [23,24],
-  [23,25],[25,27],
-  [24,26],[26,28],
-  [27,31],[28,32],
-  [29,31],[30,32],
-  [27,29],[28,30]
-];
-```
-
----
-
-## setup関数でのカメラの準備（Pose）
-
-- `setup()`内で`createCapture()`を呼びカメラを起動する
-- `{ flipped: true }`で鏡のような左右反転映像にする
-- `cam.size()`で映像サイズを`canvas`と揃える
-- `cam.hide()`でHTMLのvideo表示を非表示にする
-- `cam.elt`をMediaPipeの入力画像として渡せるようにする
-
-```javascript
-cam = createCapture(VIDEO, { flipped: true });
-cam.size(640, 480);
-cam.hide();
-```
-
----
-
-## setup関数でのPoseのセットアップ
-
-- `new Pose()`でPose推定のインスタンスを作成する
-- `locateFile`でモデル等の読み込み先（CDN）を指定する
-- `modelComplexity`で精度と速度のバランスを調整できる
-- `smoothLandmarks`で点のブレを抑えた結果を得られる
-- `onResults()`で解析結果を`poseRes`に保存する
-
-```javascript
-const base = "https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/";
-pose = new Pose({ locateFile: (file) => base + file });
-
-pose.setOptions({
-  modelComplexity: 1,
-  smoothLandmarks: true,
-  enableSegmentation: false,
-  minDetectionConfidence: 0.5,
-  minTrackingConfidence: 0.5,
-  selfieMode: true,
-});
-
-pose.onResults((res) => (poseRes = res));
-```
-
----
-
-## asyncでの読み込みについて（非同期処理・Pose）
-
-- `pose.send()`は内部で推論処理を行うため時間がかかる
-- `async / await`で処理完了を待ってから次へ進む
-- `processing`フラグで同時に複数回`send()`しないようにする
-- `requestAnimationFrame()`でブラウザ更新と同期して回す
-- 推論と描画を安定させるために非同期制御が重要になる
-
-```javascript
-async function processFrame() {
-  if (!cam?.elt || processing) return requestAnimationFrame(processFrame);
-
-  processing = true;
-  try {
-    await pose.send({ image: cam.elt });
-  } catch (e) {
-    console.error(e);
-  }
-  processing = false;
-
-  requestAnimationFrame(processFrame);
-}
-```
-
----
-
-## draw関数での姿勢情報の読み込み
-
-- `draw()`ではまず`image(cam, ...)`で映像を表示する
-- `poseRes.poseLandmarks`があれば姿勢点が推定されている
-- `landmark.x/y`は0〜1なので`width/height`で座標変換する
-- `POSE_CONNECTIONS`に沿って線を引くと骨格が見える
-- 肩・肘・膝などの点を使い動きで表現を制御できる
-
-```javascript
+background(0);
+//カメラの映像を表示（コメントアウトでオフに）
 image(cam, 0, 0, width, height);
-
-const lm = poseRes?.poseLandmarks;
-if (!lm) return;
-
-stroke(255, 0, 255);
-strokeWeight(3);
-for (const [a, b] of POSE_CONNECTIONS) {
-  const pa = lm[a], pb = lm[b];
-  if (!pa || !pb) continue;
-  line(pa.x * width, pa.y * height, pb.x * width, pb.y * height);
-}
-
-noStroke();
-fill(255, 0, 255);
-for (const p of lm) {
-  circle(p.x * width, p.y * height, 8);
-}
 ```
 
 ---
 
-# 顔の検出
-## [サンプルコード](https://editor.p5js.org/takano_ma/sketches/FS6Svkff2)
+## draw関数で推論結果の有無をチェック
 
----
-
-## MediaPipeを使う手順（FaceMesh）
-
-- `createCapture()`でカメラ映像を`cam`として取得する
-- `FaceMesh`クラスを生成して顔ランドマーク推定を初期化する
-- `onResults()`で結果を`faceRes`に保存して`draw()`で共有する
-- `processFrame()`で`faceMesh.send()`を毎フレーム実行する
-- `draw()`で`multiFaceLandmarks`を点として描画し可視化する
-
+- 推論結果がまだ届いていない場合は以降の描画を行わない
+- ランドマーク情報がない場合も処理をスキップする
 ```javascript
-cam = createCapture(VIDEO, { flipped: true });
-faceMesh = new FaceMesh({ locateFile: (file) => base + file });
-faceMesh.onResults((res) => (faceRes = res));
-```
-
----
-
-## index.htmlでライブラリを読み込む（FaceMesh）
-
-- MediaPipe SolutionsはHTMLの`script`タグで読み込める
-- FaceMesh用ライブラリを追加すると`FaceMesh`クラスが使える
-- CDNを使えばローカルにモデルを置かずに動かせる
-- p5.js → MediaPipe FaceMesh → `sketch.js`の順で読み込む
-- 読み込み順を誤ると`FaceMesh is not defined`になりやすい
-
-```javascript
-<script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559619/face_mesh.js"></script>
-<script src="sketch.js"></script>
-```
-
----
-
-## 用意するグローバル変数について（FaceMesh）
-
-- `cam`はWebカメラ映像を保持するための変数
-- `faceMesh`はMediaPipe FaceMeshのインスタンスを保持する
-- `faceRes`は顔推定結果（landmarks等）を保存する変数
-- `processing`は非同期処理の二重実行を防ぐフラグ
-- 顔は点数が多いので描画コストにも注意する
-
-```javascript
-let cam;
-let faceMesh;
-let faceRes = null;
-let processing = false;
-```
-
----
-
-## setup関数でのカメラの準備（FaceMesh）
-
-- `setup()`内で`createCapture()`を呼びカメラを起動する
-- `{ flipped: true }`で鏡のような左右反転映像にする
-- `cam.size()`で映像サイズを`canvas`と揃える
-- `cam.hide()`でHTMLのvideo表示を非表示にする
-- `cam.elt`をMediaPipeの入力画像として渡せるようにする
-
-```javascript
-cam = createCapture(VIDEO, { flipped: true });
-cam.size(640, 480);
-cam.hide();
-```
-
----
-
-## setup関数でのFaceMeshのセットアップ
-
-- `new FaceMesh()`で顔推定のインスタンスを作成する
-- `locateFile`でモデル等の読み込み先（CDN）を指定する
-- `maxNumFaces`で同時に検出する顔の数を設定する
-- `refineLandmarks`で目や口周りを高精細にする（重くなる）
-- `onResults()`で解析結果を`faceRes`に保存する
-
-```javascript
-const base = "https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559619/";
-faceMesh = new FaceMesh({ locateFile: (file) => base + file });
-
-faceMesh.setOptions({
-  maxNumFaces: 1,
-  refineLandmarks: true,
-  minDetectionConfidence: 0.5,
-  minTrackingConfidence: 0.5,
-  selfieMode: true,
-});
-
-faceMesh.onResults((res) => (faceRes = res));
-```
-
----
-
-## asyncでの読み込みについて（非同期処理・FaceMesh）
-
-- `faceMesh.send()`は推論処理を行うため時間がかかる
-- `async / await`で処理完了を待ってから次へ進む
-- `processing`フラグで同時に複数回`send()`しないようにする
-- `requestAnimationFrame()`でブラウザ更新と同期して回す
-- 点数が多いので非同期制御で安定動作させる
-
-```javascript
-async function processFrame() {
-  if (!cam?.elt || processing) return requestAnimationFrame(processFrame);
-
-  processing = true;
-  try {
-    await faceMesh.send({ image: cam.elt });
-  } catch (e) {
-    console.error(e);
+  // 推論結果が未取得、または手が検出されていない場合は処理をスキップ
+  if (
+    handsRes === null ||
+    handsRes.multiHandLandmarks === null
+  ) {
+    return;
   }
-  processing = false;
-
-  requestAnimationFrame(processFrame);
-}
 ```
 
 ---
 
-## draw関数での顔情報の読み込み
+## draw関数で手のランドマークを描画
 
-- `draw()`ではまず`image(cam, ...)`で映像を表示する
-- `faceRes.multiFaceLandmarks`があれば顔が検出されている
-- `landmark.x/y`は0〜1なので`width/height`で座標変換する
-- 468点以上の点群を描くのでサイズや間引きで調整する
-- 目や口の一部だけ使うと表現に応用しやすい
+- `handsRes.multiHandLandmarks` に手のランドマーク（関節点）が配列で格納されている（例：`lm[0].x` = 手首の x 座標）
+- 値は0〜1に正規化されているため，`width` と`height`を掛けてcanvas座標に変換
 
 ```javascript
-image(cam, 0, 0, width, height);
-
-if (!faceRes?.multiFaceLandmarks) return;
-
-noStroke();
-fill(255, 255, 0);
-
-for (const lm of faceRes.multiFaceLandmarks) {
+for (let i = 0; i < handsRes.multiHandLandmarks.length; i++) {
+  let lm = handsRes.multiHandLandmarks[i];
+  stroke(0, 255, 255);
+  strokeWeight(3);
+  for (const [a, b] of HAND_CONNECTIONS) {
+    line(lm[a].x * width, lm[a].y * height, lm[b].x * width, lm[b].y * height);
+  }
+  noStroke();
+  fill(0, 255, 255);
   for (const p of lm) {
-    circle(p.x * width, p.y * height, 2);
+    circle(p.x * width, p.y * height, 8);
   }
 }
 ```
 
 ---
+
+# 応用①：手の位置情報を使ってパーティクルを描画
+## [サンプルコード](http://editor.p5js.org/takano_ma/sketches/CZCZu-Nr2)
+
+<img src="./img/第六回/指の位置に対応したパーティクル.png" width="400" class="center-img">
+
+
+---
+
+## 指の位置からパーティクルを生成する
+
+- Particleクラスをコピーして、手の位置情報を使ってパーティクルを生成
+
+```javascript
+  for (let i = 0; i < handsRes.multiHandLandmarks.length; i++) {
+    let lm = handsRes.multiHandLandmarks[i];
+    /* 中略 */
+    //人差し指(lm[8])の位置を使ってパーティクルを生成
+    particles.push(new Particle(lm[8].x*width, lm[8].y*height));  
+  }
+```
+
+---
+
+# フルスクリーンモードに設定（[サンプルコード](https://editor.p5js.org/takano_ma/sketches/qlIJwftWR)）
+
+- `canvas(windowWidth, windowHeight)`でキャンバスをウィンドウサイズに
+- 描画位置は`lm[a].x * width`などで自動的にキャンバスサイズに調整される
+
+```javascript
+function windowResized(){
+  resizeCanvas(windowWidth, windowHeight);
+}
+// fキーでフルスクリーンの切り替えをできるようにする
+function keyPressed(){
+  if(key == "f"){
+    let fs = fullscreen();
+    fullscreen(!fs);
+  }
+}
+```
+
+---
+
+# 応用②：dist関数による距離測定による描画
+## [サンプルコード](https://editor.p5js.org/takano_ma/sketches/dZgm8eUoH)
+
+<img src="./img/第六回/指の開き具合で円のサイズを変える.png" width="700" class="center-img">
+
+---
+
+## 人差し指と親指の距離を測って円のサイズを
+
+- 二点間の距離を`dist関数`で取得して、`map関数`で円のサイズに反映
+
+```javascript
+    const a = lm[4];
+    const b = lm[8];
+    const ax = a.x * width;
+    const ay = a.y * height;
+    const bx = b.x * width;
+    const by = b.y * height;
+    const d = dist(ax, ay, bx, by);
+    let targetSize = map(d, 20, 180, 10, 500);
+    targetSize = constrain(targetSize, 10, 500);
+    smoothSize[i] = lerp(smoothSize[i], targetSize, 0.25);
+    const cx = (ax + bx) * 0.5;
+    const cy = (ay + by) * 0.5;
+    ellipse(cx, cy, smoothSize[i]);
+```
+
+---
+
+## 指を摘んでいるときだけパーティクルを生成する（[コード](https://editor.p5js.org/takano_ma/sketches/zkCSAfeQJ))
+
+- `dist`で指の間隔が狭い状態の時だけパーティクルを生成するようにする
+
+```javascript
+if(d < 150){particles.push(new Particle(cx, cy, d));}
+```
+
+<img src="./img/第六回/Pinchを検出してパーティクルの生成.png" width="700" class="center-img">
+
+---
+
+## 指の開き具合でパーティクルのサイズを調整する（[コード](https://editor.p5js.org/takano_ma/sketches/Nv01ZMjlB))
+
+- `dist`を`map`でオブジェクトの倍率として利用
+
+```javascript
+targetScale = map(d, 20, 180, 0.2, 10.0);
+```
+
+<img src="./img/第六回/指の開き具合でパーティクルのサイズを変える.png" width="700" class="center-img">
+
+
+---
+
+
+# 予備資料：その他の生体情報の検出
+
+---
+
+## 姿勢と顔の検出
+
+- `hand`以外にも`pose`と`face`のモデルが利用できる
+- 基本的には`hand`のものと同じ
+- 姿勢情報の検出 ([サンプルコード](https://editor.p5js.org/takano_ma/sketches/rD96sGTJ3))
+- 顔の検出([サンプルコード](https://editor.p5js.org/takano_ma/sketches/FS6Svkff2))
