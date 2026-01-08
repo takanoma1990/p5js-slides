@@ -96,10 +96,10 @@
 <header>p5.js 授業 第6回</header>
 <h2 id="mediapipe%E3%82%92%E4%BD%BF%E3%81%86%E6%89%8B%E9%A0%86">MediaPipeを使う手順</h2>
 <ul>
-<li><code>createCapture()</code>でカメラ映像を<code>cam</code>として取得する</li>
+<li><code>createCapture()</code>でカメラ映像を取得する</li>
 <li><code>Hands</code>クラスを使って手の検出モデルを初期化する</li>
 <li><code>onResults()</code>で認識結果を<code>handsRes</code>に保存する</li>
-<li><code>processFrame()</code>内で<code>hands.send()</code>を繰り返し実行する</li>
+<li><code>async/await</code>による非同期処理で<code>hands.send()</code>を繰り返し実行する</li>
 <li><code>draw()</code>関数で手の位置情報を使った描画を行う</li>
 </ul>
 <footer>画像認識による生体計測</footer>
@@ -108,9 +108,7 @@
 <header>p5.js 授業 第6回</header>
 <h2 id="indexhtml%E3%81%A7%E3%83%A9%E3%82%A4%E3%83%96%E3%83%A9%E3%83%AA%E3%82%92%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%82%80">index.htmlでライブラリを読み込む</h2>
 <ul>
-<li>MediaPipe SolutionsはHTMLの<code>script</code>タグで読み込む</li>
 <li>Hands用ライブラリを追加すると<code>Hands</code>クラスが使える</li>
-<li>CDNを使うことでローカル環境構築が不要になる</li>
 <li>p5.js → MediaPipe → <code>sketch.js</code>の順で読み込む</li>
 <li>読み込み順を間違えるとクラスが未定義になる</li>
 </ul>
