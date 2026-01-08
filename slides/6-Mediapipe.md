@@ -101,10 +101,11 @@ footer: 音の入力と可視化表現
 
 ## MediaPipeを使った生体計測
 
-- 手や顔、姿勢などを点群として取得
+- 手や顔、姿勢などを複数の点（点群）として取得
 - 座標情報（landmarks）が主な出力
 - 計測や可視化表現に向いている
-- 今回はこれを利用する
+- 今回は主に「手の計測」を扱う
+  - 姿勢や顔の計測もほぼ同じようにできる
 
 
 ---
@@ -359,8 +360,8 @@ function keyPressed(){
 - 二点間の距離を`dist関数`で取得して、`map関数`で円のサイズに反映
 
 ```javascript
-    const a = lm[4];
-    const b = lm[8];
+    const a = lm[4]; // 親指の先端（THUMB_TIP）
+    const b = lm[8]; //人差し指の先端（INDEX_FINGER_TIP）
     const ax = a.x * width;
     const ay = a.y * height;
     const bx = b.x * width;

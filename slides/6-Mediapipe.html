@@ -70,10 +70,14 @@
 <header>p5.js 授業 第6回</header>
 <h2 id="mediapipe%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%9F%E7%94%9F%E4%BD%93%E8%A8%88%E6%B8%AC">MediaPipeを使った生体計測</h2>
 <ul>
-<li>手や顔、姿勢などを点群として取得</li>
+<li>手や顔、姿勢などを複数の点（点群）として取得</li>
 <li>座標情報（landmarks）が主な出力</li>
 <li>計測や可視化表現に向いている</li>
-<li>今回はこれを利用する</li>
+<li>今回は主に「手の計測」を扱う
+<ul>
+<li>姿勢や顔の計測もほぼ同じようにできる</li>
+</ul>
+</li>
 </ul>
 <footer>音の入力と可視化表現</footer>
 </section>
@@ -330,8 +334,8 @@ cam.<span class="hljs-property">elt</span>.<span class="hljs-property">onloadedm
 <ul>
 <li>二点間の距離を<code>dist関数</code>で取得して、<code>map関数</code>で円のサイズに反映</li>
 </ul>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-javascript">    <span class="hljs-keyword">const</span> a = lm[<span class="hljs-number">4</span>];
-    <span class="hljs-keyword">const</span> b = lm[<span class="hljs-number">8</span>];
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-javascript">    <span class="hljs-keyword">const</span> a = lm[<span class="hljs-number">4</span>]; <span class="hljs-comment">// 親指の先端（THUMB_TIP）</span>
+    <span class="hljs-keyword">const</span> b = lm[<span class="hljs-number">8</span>]; <span class="hljs-comment">//人差し指の先端（INDEX_FINGER_TIP）</span>
     <span class="hljs-keyword">const</span> ax = a.<span class="hljs-property">x</span> * width;
     <span class="hljs-keyword">const</span> ay = a.<span class="hljs-property">y</span> * height;
     <span class="hljs-keyword">const</span> bx = b.<span class="hljs-property">x</span> * width;
