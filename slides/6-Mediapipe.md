@@ -4,7 +4,7 @@ theme: gradient_v2
 paginate: true
 class: p5_v2
 header: p5.js 授業 第6回
-footer: 音の入力と可視化表現
+footer: 画像認識による生体計測
 ---
 
 
@@ -110,6 +110,10 @@ footer: 音の入力と可視化表現
 
 ---
 
+# MediaPipeを使った手の検出
+
+---
+
 # 手の位置情報を取得
 ## [サンプルコード](https://editor.p5js.org/takano_ma/sketches/m9cIM9XnN)
 
@@ -120,19 +124,17 @@ footer: 音の入力と可視化表現
 
 ## MediaPipeを使う手順
 
-- `createCapture()`でカメラ映像を`cam`として取得する
+- `createCapture()`でカメラ映像を取得する
 - `Hands`クラスを使って手の検出モデルを初期化する
 - `onResults()`で認識結果を`handsRes`に保存する
-- `processFrame()`内で`hands.send()`を繰り返し実行する
+- `async/await`による非同期処理で`hands.send()`を繰り返し実行する
 - `draw()`関数で手の位置情報を使った描画を行う
 
 ---
 
 ## index.htmlでライブラリを読み込む
 
-- MediaPipe SolutionsはHTMLの`script`タグで読み込む
 - Hands用ライブラリを追加すると`Hands`クラスが使える
-- CDNを使うことでローカル環境構築が不要になる
 - p5.js → MediaPipe → `sketch.js`の順で読み込む
 - 読み込み順を間違えるとクラスが未定義になる
 
@@ -148,7 +150,6 @@ footer: 音の入力と可視化表現
 
 - インスタンス用の変数や配列を用意
 - `processing`は非同期処理の重複実行を防ぐために用意
-
 
 ```javascript
 let cam; //カメラ用のインスタンス変数
@@ -305,6 +306,10 @@ for (let i = 0; i < handsRes.multiHandLandmarks.length; i++) {
 
 ---
 
+# 応用：手の動きを使って描画を制御
+
+---
+
 # 応用①：手の位置情報を使ってパーティクルを描画
 ## [サンプルコード](http://editor.p5js.org/takano_ma/sketches/CZCZu-Nr2)
 
@@ -403,7 +408,7 @@ targetScale = map(d, 20, 180, 0.2, 10.0);
 ---
 
 
-# 予備資料：その他の生体情報の検出
+# その他の生体情報の検出
 
 ---
 
