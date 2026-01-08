@@ -422,18 +422,20 @@ targetScale = map(d, 20, 180, 0.2, 10.0);
 
 ---
 
-## 姿勢(Pose)のランドマーク
+## 姿勢(Pose)のランドマーク([サンプルコード](https://editor.p5js.org/takano_ma/sketches/rD96sGTJ3))
 
 - `hands`と同じようにランドマークと配列番号が対応している
-- 23個のランドマークが検出される
+- 33個のランドマークが検出される
 <img src="./img/第六回/姿勢のランドマーク.webp" width="700" class="center-img">
 
 ---
 
-## 顔(Face)のランドマーク
+## 顔(Face)のランドマーク([サンプルコード](https://editor.p5js.org/takano_ma/sketches/FS6Svkff2))
 
-- これも同様にランドマークと配列番号が対応している
+- これも同様にランドマークと配列番号が対応
 - 478個のランドマークが検出される
+- 画像はランドマークを番号にしたもの
+  - [サンプルコード](https://editor.p5js.org/takano_ma/sketches/2DYa26rXB)
 
 
-![bg right:40% w:90%](./img/第六回/Faceのランドマーク.png)
+![bg right:32% w:90%](./img/第六回/Faceのランドマーク.png)
