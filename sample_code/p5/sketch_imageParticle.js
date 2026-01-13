@@ -60,9 +60,9 @@ class Particle {
     this.lifespan = 255;
 
     // 速度
-    if (this.x < width / 2) this.vx = random(-1.0, -0.1);
-    else this.vx = random(0.1, 1.0);
-    this.vy = random(-1., 1.);
+    if (this.x < width / 2) this.vx = random(-0.5, -0.1);
+    else this.vx = random(0.1, 0.5);
+    this.vy = random(-0.5, 0.5);
     this.direction = int(random(2));
 
     // ★このパーティクルが使う画像を1枚決める
