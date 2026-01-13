@@ -8,12 +8,10 @@ function setup() {
   canvas.parent("p5-background");
   background(0);
   
-  mic = new p5.AudioIn();
-  mic.amp(2);
-  mic.start();
+  
   rectMode(CENTER);
   angleMode(DEGREES);
-  noCursor();
+
   c1 = color(random(255),random(255),random(255), 100);
   c2 = color(random(255),random(255),random(255), 100);
 
@@ -34,12 +32,6 @@ function draw() {
     line(0, y, width, y);
   }
 
-   
-  let level = mic.getLevel();
-  smoothed = lerp(smoothed, level, 0.1);
-  
-  let p_size = map(smoothed, 0.01, 0.2, 5, 100, true);
-  let e_size = map(smoothed, 0.001, 0.2, 10, 1500, true);
   
   if(random(10) > 9){
     particles.push( new Particle(random(width), random(height), random(10,50)) );
