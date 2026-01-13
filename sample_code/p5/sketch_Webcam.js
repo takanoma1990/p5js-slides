@@ -85,7 +85,7 @@ class Particle {
     let speed = random(-.5, .5);
     this.vel = p5.Vector.fromAngle(angle).mult(speed);
     this.life = 255;
-    this.size = random(10, 30);
+    this.size = random(5, 20);
     this.r = random(255);
     this.g = random(255);
     this.b = random(255);
