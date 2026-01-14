@@ -2,8 +2,8 @@
 const sketches = [
   "p5/sketch_flowParticle.js",
   "p5/sketch_mouseParticle.js",
-  "p5/sketch_randomShapes.js",
-  "p5/sketch_Webcam.js"
+  "p5/sketch_randomShapes.js"
+  // "p5/sketch_Webcam.js"
 ];
 
 // ランダムに1つ選ぶ
