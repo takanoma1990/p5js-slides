@@ -4,7 +4,7 @@ theme: gradient_v2
 paginate: true
 class: p5_v2
 header: p5.js 授業 第7回
-footer: 作品ページの制作
+footer: 作品制作
 ---
 
 
@@ -46,7 +46,7 @@ footer: 作品ページの制作
 </style>
 
 # 第7回　クリエイティブ・コーディング入門
-## 作品ページの制作
+## p5.jsの作品コード作り
 
 
 ---
@@ -91,6 +91,7 @@ footer: 作品ページの制作
 
 - 案：常設モニターをイニシアチブ棟に設置
 - ミニPC(購入予定)を常時稼働させてスクリーンセーバー的に配置
+- Webカメラ・マイクの設置もできるので、映像と音の入力も可能
 
 <img src="./img/第七回/OCでの設置イメージ.jpeg" class="center-img" width="700">
 
@@ -256,15 +257,62 @@ canvas {
 
 # まとめ（最終的な成果物に向けて）
 
-- 今日の内容
-  - VS Code + Live Server で実行  
-  - ブラウザ表示・Canvasサイズを調整  
 
-- 最終制作  
-  - p5.js の作品を **2〜3 点** 制作  
-  - 作品ページ または プロジェクション展示を想定  
+- 最終制作（できれば）
+  - p5.js の作品を **2〜3 点** 制作
+  - プロジェクション展示を想定（もしくはweb掲載）
+  - 静止画、アニメーション、インタラクション、音の可視化など
 
 - 提出について  
   - **1月中** に プログラム または 作品ページのリンクを Slack に共有  
   - 難しければ2月中の提出でも問題ないです
 
+---
+
+# 参考資料（一回目の資料）
+
+---
+
+## 参考サイト：p5.js Exampleページ
+
+- https://p5js.org/examples/ にてp5.jsを使ったサンプルコードが見れる
+- 基本的な描画から応用的なものまで記載されている
+
+
+<img src="./img/第一回/p5_example_page.png"  width="700" class="center-img">
+
+---
+
+## 参考サイト：[OpenProcessing](https://openprocessing.org/)
+- p5.js などで制作した作品をweb上で公開・共有できるプラットフォーム
+- 各作品のコードが公開 されており、ブラウザ上で閲覧・実行・編集 が可能
+- 表現の参考になるクリエイターの作品が多くアップされている
+
+<img src="./img/第一回/OpenProcessing_image.png" alt="OpenProcessing サイト例" width="700" class="center-img">
+
+---
+
+## 参考 YouTube Ch : [Coding Train](https://www.youtube.com/@TheCodingTrain/videos)
+
+- Daniel Shiffman のYouTube
+- ジェネラティブ・アートの書籍も執筆している
+- [Nature of Code](https://natureofcode.com/) は物理シミュレーションを用いた表現を解説
+
+<img src="./img/第一回/CodingTrain_header.png"  width="900" class="center-img">
+
+---
+
+## 書籍 : [Generative Design](https://www.youtube.com/@TheCodingTrain/videos)
+
+- p5.jsを使った色々なデザイン例が載っている書籍
+- ラーニングコモンズに配下しています
+
+![bg right:40% w:100mm](./img/第一回/GenerativeDesign.jpg)
+
+---
+
+
+
+## + 参考資料：授業のコードをまとめたサイト（[リンク](https://takanoma1990.github.io/p5js-slides/sample_code/index.html)）
+
+<img src="./img/第七回/サンプルコードのサイト.png" class="center-img" width="800">
