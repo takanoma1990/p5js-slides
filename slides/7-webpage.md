@@ -3,8 +3,8 @@ marp: true
 theme: gradient_v2
 paginate: true
 class: p5_v2
-header: p5.js 授業 第6回
-footer: 画像認識による生体計測
+header: p5.js 授業 第7回
+footer: 作品ページの制作
 ---
 
 
@@ -46,20 +46,43 @@ footer: 画像認識による生体計測
 </style>
 
 # 第7回　クリエイティブ・コーディング入門
-## 作品ページの作成
+## 作品ページの制作
 
 
 ---
 
 ## 今日の内容
 
-- サンプルコード一覧のWebページ
-- 作品・デザイン案
+- 最終的な成果物に関して
 - p5.js のコードをダウンロード
 - VS Codeでp5.jsを実行(Live Server)
 - ブラウザの描画領域を調整
-- 予備：GitHub を使った公開ページの作成
 - まとめ
+
+
+---
+
+# 最終的な成果物に関して
+
+---
+
+## 最終的な制作
+
+
+- 目標：各自2つか3つ程度のp5.jsによる描画プログラムを作る
+  - （できれば）成果物として学内のどこかでプロジェクション展示
+  - プロジェクションが難しい場合は「作品集」としてサイトを作成
+- 期限：1月中にプログラム or リンクをslackで送ってください
+
+
+---
+
+## 授業のコードをまとめたサイト（[リンク](https://takanoma1990.github.io/p5js-slides/sample_code/index.html)）
+- これまで扱ったコードをまとめたサイトを公開中
+- 最終的な成果物の参考として利用してください
+- （プロジェクションできなかった場合、このサイトのように作品をまとめる）
+
+<img src="./img/第七回/サンプルコードのサイト.png" class="center-img" width="600">
 
 ---
 
@@ -70,8 +93,10 @@ footer: 画像認識による生体計測
 ## Web Editorで作ったコードをダウンロード
 - Web Editorから任意のコードを選ぶ
   - 自分のアカウントでも人のアカウントでも良い
+  - ([サンプルコード](https://editor.p5js.org/takano_ma/sketches/CZCZu-Nr2))
 - 上部のメニューから File → Downloadを選択
 - html, css, jsがまとまったZipが保存される
+
 
 ![bg right:40% w:90%](./img/第七回/Editorのファイルメニューからダウンロード.png)
 
@@ -206,18 +231,5 @@ canvas {
 
 ## CSSでCanvasを中央にした際の描画
 <img src="./img/第七回/CSSでセンターに表示.png" width="700" class="center-img">
-
-
----
-
-
-## 作品一覧のサイト
-
-
----
-
-
-# GitHub を使った公開ページの作成
-
 
 ---
