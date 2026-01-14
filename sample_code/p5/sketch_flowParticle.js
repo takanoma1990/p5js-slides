@@ -1,5 +1,6 @@
 let particles = [];
 let c1, c2;
+let bg;
 
 function setup() {
   const canvas = createCanvas(windowWidth, windowHeight);
@@ -11,14 +12,13 @@ function setup() {
   c1 = color(random(255),random(255),random(255));
   c2 = color(random(255),random(255),random(255));
 
-  for (let y = 0; y < height; y++) {
-    let inter = y/height; // 
-    stroke(lerpColor(c1, c2, inter));
-    line(0, y, width, y);
-  }
+  makeGradient();
 }
 
 function draw() {
+
+  image(bg, 0, 0);
+
   for (let y = 0; y < height; y++) {
     let inter = y/height; // 
     stroke(lerpColor(c1, c2, inter));
@@ -56,7 +56,17 @@ class Particle {
   }
 }
 
+function makeGradient() {
+  bg = createGraphics(width, height);
+  bg.noFill();
+  for (let y = 0; y < height; y++) {
+    let inter = y / height;
+    bg.stroke(lerpColor(c1, c2, inter));
+    bg.line(0, y, width, y);
+  }
+}
 
 function windowResized(){
   resizeCanvas(windowWidth, windowHeight);
+  makeGradient();
 }

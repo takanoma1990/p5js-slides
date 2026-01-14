@@ -2,6 +2,7 @@ let mic;
 let smoothed = 0;
 let particles = [];
 let c1, c2;
+let bg; // 背景用バッファ
 
 function setup() {
   const canvas = createCanvas(windowWidth, windowHeight);
@@ -15,24 +16,12 @@ function setup() {
   c1 = color(random(255),random(255),random(255), 100);
   c2 = color(random(255),random(255),random(255), 100);
 
-  for (let y = 0; y < height; y++) {
-    let inter = y/height; // 
-    stroke(lerpColor(c1, c2, inter));
-    line(0, y, width, y);
-  }
+  makeGradient();
 }
 
 function draw() {
-//   background(255, 10);
-  // background(0);
-  
-  for (let y = 0; y < height; y++) {
-    let inter = y/height; // 
-    stroke(lerpColor(c1, c2, inter));
-    line(0, y, width, y);
-  }
+  image(bg, 0, 0);
 
-  
   if(random(10) > 9){
     particles.push( new Particle(random(width), random(height), random(10,50)) );
     particles.push( new Particle(random(width), random(height), random(10,50)) );
@@ -133,8 +122,18 @@ function drawTwinkleStar(x, y, r) {
   pop();
 }
 
-function windowResized(){
-  resizeCanvas(windowWidth, windowHeight);
-  background(0);
+function makeGradient() {
+  bg = createGraphics(width, height);
+  bg.noFill();
+  for (let y = 0; y < height; y++) {
+    let inter = y / height;
+    bg.stroke(lerpColor(c1, c2, inter));
+    bg.line(0, y, width, y);
+  }
 }
 
+function windowResized() {
+    resizeCanvas(windowWidth, windowHeight);
+    initBounds();
+    makeGradient();
+}

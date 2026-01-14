@@ -13,6 +13,8 @@ let mouseP = [];
 let p_speed = 0.5;
 
 let c1, c2;
+let bg; // 背景用バッファ
+
 
 let pre_mouse;
 
@@ -29,21 +31,11 @@ function setup() {
     c1 = color(random(200),random(200),random(200));
     c2 = color(random(200),random(200),random(200));
 
-    for (let y = 0; y < height; y++) {
-        let inter = y/height; // 
-        stroke(lerpColor(c1, c2, inter));
-        line(0, y, width, y);
-    }
+    makeGradient();
 }
 
 function draw() {
-    // background(247, 239, 220);
-      
-    for (let y = 0; y < height; y++) {
-        let inter = y/height; // 
-        stroke(lerpColor(c1, c2, inter));
-        line(0, y, width, y);
-    }
+    image(bg, 0, 0);
 
     const nearest = new Array(particles.length).fill(Infinity);
 
@@ -122,7 +114,8 @@ class mouseParticle {
 
     display() {
     noStroke();
-    fill(this.r, this.g, this.b, this.life);
+    // fill(this.r, this.g, this.b, this.life);
+    fill(255, this.life);
     ellipse(this.x, this.y, this.e_size);
     }
 
@@ -191,9 +184,20 @@ function initParticles() {
     }
 }
 
-// ★ ウィンドウリサイズ時も全画面に追従
+
+function makeGradient() {
+  bg = createGraphics(width, height);
+  bg.noFill();
+  for (let y = 0; y < height; y++) {
+    let inter = y / height;
+    bg.stroke(lerpColor(c1, c2, inter));
+    bg.line(0, y, width, y);
+  }
+}
+
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
     initBounds();
+    makeGradient();
 }
 
