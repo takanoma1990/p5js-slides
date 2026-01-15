@@ -93,6 +93,7 @@ footer: 作品制作
 - 案：常設モニターをイニシアチブ棟に設置
 - ミニPC(購入予定)を常時稼働させてスクリーンセーバー的に配置
 - Webカメラ・マイクの設置もできるので、映像と音の入力も可能
+  - ⚠️：マイクの入力は可能だが、音楽の自動再生は難しい
 
 <img src="./img/第七回/OCでの設置イメージ.jpeg" class="center-img" width="700">
 
@@ -118,7 +119,7 @@ footer: 作品制作
   - ([サンプルコード](https://editor.p5js.org/takano_ma/sketches/CZCZu-Nr2))
 - 上部のメニューから File → Downloadを選択
 - html, css, jsがまとまったzipが保存される
-  - → 完成している場合は、そのままzipを提出してもOK
+  - → Editor上で完成している場合は、そのままzipを提出してもOK
 
 
 ![bg right:40% w:90%](./img/第七回/Editorのファイルメニューからダウンロード.png)
