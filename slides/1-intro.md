@@ -112,25 +112,6 @@ footer: p5.jsの基本的な使い方
 
 ---
 
-## [カレイドスコープ（万華鏡）](https://editor.p5js.org/takano_ma/sketches/HaOo9WPYx)← クリックしてweb editorへ
-
-- ▶️ ボタンがあるのでそれを押すと動かせる
-- マウスをクリックしながら動かすと、万華鏡のような模様が描ける
-
-<img src="./img/第一回/カレイドスコープサンプル.png"  width="700" class="center-img">
-
----
-
-## [カレイドスコープ（万華鏡）](https://editor.p5js.org/takano_ma/sketches/HaOo9WPYx)のコードを書き換えてみる
-
-- サンプルコードを少し変えることで、色々な表現にアレンジ
-- draw()関数内の`background(0, 3);`のコメントアウトを外してみる
-- ▶️ で再実行すると、残像のような表現にできる
-
-<img src="./img/第一回/カレイドスコープ_v2.png"  width="700" class="center-img">
-
----
-
 ## [カメラの映像を使った描画](https://editor.p5js.org/takano_ma/sketches/cZ0bfE_us)
 
 - PCのWebカメラの映像を使ってパーティクルを生成
